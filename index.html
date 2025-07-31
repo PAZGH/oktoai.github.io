@@ -8,10 +8,24 @@
     if (window.location.hostname === "www.oktoai.ca") {
       window.location.href = "https://oktoai.ca";
     }
-    function searchGoogle() {
+
+    function performSearch() {
       const query = document.getElementById("search-input").value;
+      const engine = document.getElementById("engine-select").value;
       if (query.trim()) {
-        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+        let url = "";
+        switch(engine) {
+          case "google":
+            url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            break;
+          case "perplexity":
+            url = `https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`;
+            break;
+          case "you":
+            url = `https://you.com/search?q=${encodeURIComponent(query)}`;
+            break;
+        }
+        window.open(url, '_blank');
       }
     }
   </script>
@@ -70,10 +84,11 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
       animation: fadeInUp 1s ease forwards;
       width: 100%;
-      max-width: 500px;
+      max-width: 600px;
       z-index: 2;
+      gap: 0.5rem;
     }
-    .search-box input {
+    .search-box input, .search-box select {
       background: transparent;
       border: none;
       outline: none;
@@ -127,12 +142,17 @@
 <body>
   <div class="ai-background"></div>
   <div class="glow"></div>
-  <h1>OktoAI</h1>
-  <p>L’humain propulsé par l’intelligence.</p>
+  <h1>Bienvenue chez OktoAI</h1>
+  <p>Nous combinons l'automatisation intelligente avec l'efficacité humaine pour livrer des solutions TI qui propulsent votre entreprise.</p>
 
   <div class="search-box">
     <input type="text" id="search-input" placeholder="Posez votre question..." />
-    <button onclick="searchGoogle()">Envoyer</button>
+    <select id="engine-select">
+      <option value="google">Google</option>
+      <option value="perplexity">Perplexity AI</option>
+      <option value="you">You.com</option>
+    </select>
+    <button onclick="performSearch()">Envoyer</button>
   </div>
 
   <footer>© 2025 OktoAI. Tous droits réservés.</footer>
