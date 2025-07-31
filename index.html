@@ -49,8 +49,8 @@
         responseDiv.innerHTML = "❌ Échec de la requête : " + error.message;
       }
     }
+    // Ripple, rebond et particules
     document.addEventListener('DOMContentLoaded', function() {
-      // Effet ripple sur bouton
       const btn = document.querySelector('.search-box button');
       if(btn) {
         btn.addEventListener('click', function(e){
@@ -63,7 +63,6 @@
           setTimeout(()=>{ripple.remove()}, 550);
         });
       }
-      // Rebond input/select
       ['#search-input','#engine-select'].forEach(sel=>{
         const el=document.querySelector(sel);
         if(el) {
@@ -71,7 +70,7 @@
           el.addEventListener('blur',()=>el.classList.remove('bounce'));
         }
       });
-      // Particules sobres
+      // Particules AI + background gradient animation
       const canvas = document.createElement('canvas');
       canvas.id = 'particles';
       canvas.style.position = 'fixed';
@@ -79,32 +78,54 @@
       canvas.style.left = 0;
       canvas.style.width = '100vw';
       canvas.style.height = '100vh';
-      canvas.style.zIndex = 1;
+      canvas.style.zIndex = 2;
       canvas.style.pointerEvents = 'none';
       document.body.prepend(canvas);
       const ctx = canvas.getContext('2d');
       let dpr = window.devicePixelRatio || 1;
       let W = window.innerWidth, H = window.innerHeight;
       let particles = [];
+      let t = 0;
       function resize() {
         W = window.innerWidth; H = window.innerHeight;
         canvas.width = W*dpr; canvas.height = H*dpr;
         canvas.style.width = W+'px'; canvas.style.height = H+'px';
       }
       resize(); window.addEventListener('resize', resize);
-      for(let i=0; i<18; i++) {
+      for(let i=0; i<36; i++) {
         let angle = Math.random()*2*Math.PI;
         particles.push({
           x: Math.random()*W,
           y: Math.random()*H,
-          r: 1.1+Math.random()*1.9,
-          dx: Math.cos(angle)*0.08 + Math.random()*0.06,
-          dy: Math.sin(angle)*0.08 + Math.random()*0.06,
-          color: "#10a37f26"
+          r: 1+Math.random()*1.6,
+          dx: Math.cos(angle)*0.13 + Math.random()*0.07,
+          dy: Math.sin(angle)*0.13 + Math.random()*0.07,
+          color: i%4==0 ? "#10a37f26" : "#66ffe622"
         });
       }
       function anim() {
         ctx.clearRect(0,0,W*dpr,H*dpr);
+
+        // Ondes animées en arrière-plan
+        for(let l=0; l<3; l++) {
+          ctx.save();
+          ctx.globalAlpha = 0.10 + 0.03 * l;
+          ctx.beginPath();
+          for(let i=0; i<=W; i+=8){
+            ctx.lineTo(
+              i*dpr,
+              H/2*dpr + Math.sin(i/90 + t/41 + l)*32*l*dpr + Math.cos(i/130-t/53-l*7)*16*dpr
+            );
+          }
+          ctx.strokeStyle = l==0 ? "#10a37f" : (l==1 ? "#0f8e72" : "#09cfa4");
+          ctx.lineWidth = 1.5-l*0.2;
+          ctx.shadowBlur = 11-l*6;
+          ctx.shadowColor = ctx.strokeStyle;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Particules
         for(const p of particles){
           p.x += p.dx; p.y += p.dy;
           if(p.x < 0) p.x = W;
@@ -115,9 +136,10 @@
           ctx.arc(p.x*dpr, p.y*dpr, p.r*dpr, 0, 2*Math.PI);
           ctx.fillStyle = p.color;
           ctx.shadowColor = p.color;
-          ctx.shadowBlur = 2*dpr;
+          ctx.shadowBlur = 6*dpr;
           ctx.fill();
         }
+        t += 1.2;
         requestAnimationFrame(anim);
       }
       anim();
@@ -127,8 +149,8 @@
     :root {
       --okto-green: #10a37f;
       --okto-dark: #191b21;
-      --glass-bg: rgba(28,30,34,0.98);
-      --glass-border: rgba(44,255,190,0.07);
+      --glass-bg: rgba(28,30,34,0.97);
+      --glass-border: rgba(44,255,190,0.06);
     }
     html, body { height: 100%; }
     body {
@@ -136,130 +158,92 @@
       font-family: 'Segoe UI', sans-serif;
       margin: 0; padding: 0;
       color: #f4f4f6;
-      background: #191b21;
+      background: #181b22;
       overflow-x: hidden;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       position: relative;
     }
-    /* Water ripple overlay, ultra soft */
-    .water-bg {
-      pointer-events: none;
-      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-      z-index: 2;
-      background: repeating-radial-gradient(circle at 23% 22%, #10a37f0c 0, #23282b09 60%, #181b2300 100%);
-      animation: waterMove 18s cubic-bezier(.5,0,.5,1) infinite alternate;
-      opacity: 0.05;
-    }
-    @keyframes waterMove {
-      0% { background-position: 0% 0%; filter: blur(7px);}
-      60% { background-position: 40% 40%; filter: blur(13px);}
-      100% { background-position: 0% 0%; filter: blur(7px);}
-    }
-    /* Ripples encore plus subtil */
-    .bg-ripples {
-      position: fixed;
-      z-index: 0;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw; height: 100vh;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    .ripple {
-      position: absolute;
-      width: 320px; height: 320px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #10a37f15 30%, #20232905 100%, #181b2300 100%);
-      filter: blur(44px);
-      opacity: 0.10;
-      animation: rippleMove 14s linear infinite;
-    }
-    .ripple:nth-child(2) {
-      left: 54vw; top: 58vh;
-      background: radial-gradient(circle, #232c2710 40%, #10a37f13 100%, #181b2300 100%);
-      width: 150px; height: 150px;
-      animation-delay: 4s;
-      opacity: 0.06;
-      filter: blur(14px);
-    }
-    .ripple:nth-child(3) {
-      left: 65vw; top: 18vh;
-      background: radial-gradient(circle, #10a37f11 0%, #23282b06 90%, #181b2300 100%);
-      width: 120px; height: 120px;
-      animation-delay: 7s;
-      opacity: 0.06;
-      filter: blur(9px);
-    }
-    @keyframes rippleMove {
-      0% { transform: translateY(0) scale(1);}
-      50% { transform: translateY(-20px) scale(1.02);}
-      100% { transform: translateY(0) scale(1);}
-    }
-    /* ---- HEADER ---- */
+    /* --- OktoAI --- */
     .oktoai-anim {
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      margin-top: 8vh;
-      margin-bottom: 0.6rem;
+      margin-top: 6vh;
+      margin-bottom: 0.5rem;
+      user-select: none;
+    }
+    .oktoai-flare {
+      position: absolute;
+      left: 50%; top: 54%;
+      transform: translate(-50%,-50%);
+      width: 260px; height: 70px;
+      border-radius: 60% 80%;
+      background: radial-gradient(ellipse 100% 65% at 53% 60%, #10a37f11 30%, #181b2300 100%);
+      filter: blur(8px);
+      opacity: 0.36;
+      z-index: -1;
+      animation: haloAnim 5.2s cubic-bezier(.6,.13,.65,.94) infinite alternate;
+    }
+    @keyframes haloAnim {
+      0% { opacity: 0.13; transform: translate(-50%,-50%) scale(0.99);}
+      50% { opacity: 0.36; transform: translate(-50%,-50%) scale(1.09);}
+      100% { opacity: 0.13; transform: translate(-50%,-50%) scale(0.99);}
     }
     .oktoai-pulse {
       font-size: 2.7rem;
       font-weight: 700;
-      background: linear-gradient(90deg, #8fc9b0 5%, #10a37f 50%, #1e2226 100%);
-      background-size: 200% 100%;
+      letter-spacing: -0.5px;
+      background: linear-gradient(95deg, #8fc9b0 0%, #10a37f 65%, #1e2226 100%);
+      background-size: 190% 100%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: gradientWave 7s ease-in-out infinite alternate, oktoPulseGlow 2.8s cubic-bezier(.38,.23,.59,.78) infinite;
-      letter-spacing: -0.5px;
+      animation: oktoBreathe 3.8s cubic-bezier(.52,.1,.56,.98) infinite;
       z-index: 4;
-      user-select: none;
       position: relative;
-      padding-right: 0.25em;
+      padding-right: 0.22em;
+      transition: filter 0.21s;
+      filter: drop-shadow(0 0 6px #10a37f11);
     }
-    @keyframes gradientWave {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes oktoBreathe {
+      0%, 100% { letter-spacing: -0.5px; filter: blur(0.1px);}
+      30% { letter-spacing: 0.03em; filter: blur(0.5px);}
+      60% { letter-spacing: -0.5px; filter: blur(0.07px);}
     }
-    @keyframes oktoPulseGlow {
-      0%, 100% { text-shadow: 0 0 7px #10a37f29; }
-      50% { text-shadow: 0 0 18px #10a37f59, 0 0 22px #10a37f16; }
+    .oktoai-scan {
+      position: absolute;
+      left: 7%; right: 7%; top: 0; bottom: 0;
+      pointer-events: none;
+      border-radius: 1em;
+      border-top: 1.2px dashed #10a37f55;
+      border-bottom: 1.2px dashed #10a37f55;
+      opacity: 0.15;
+      animation: scanAnim 2.6s linear infinite;
+    }
+    @keyframes scanAnim {
+      0% { top: 90%; opacity: 0.12;}
+      20% { top: 30%; opacity: 0.19;}
+      40% { top: 10%; opacity: 0.24;}
+      70% { top: 30%; opacity: 0.19;}
+      100% { top: 90%; opacity: 0.12;}
     }
     .oktoai-dot {
-      width: 12px; height: 12px;
+      width: 11px; height: 11px;
       margin-left: 9px;
       border-radius: 50%;
       background: #10a37f;
       box-shadow: 0 0 7px 0 #10a37f33;
-      animation: dotPulse 1.5s infinite;
+      animation: dotPulse 1.7s infinite;
       display: inline-block;
     }
     @keyframes dotPulse {
-      0%,100% { transform: scale(1); opacity:0.75;}
-      60% { transform: scale(1.27); opacity:1;}
-    }
-    .oktoai-halo {
-      position: absolute;
-      left: 50%; top: 53%;
-      transform: translate(-50%,-50%);
-      width: 195px; height: 53px;
-      border-radius: 60% 80%;
-      background: radial-gradient(ellipse 90% 60% at 53% 60%, #10a37f17 20%, #181b2300 100%);
-      filter: blur(6px);
-      opacity: 0.45;
-      z-index: -1;
-      animation: haloAnim 3.5s cubic-bezier(.7,.13,.45,.97) infinite alternate;
-    }
-    @keyframes haloAnim {
-      0% { opacity: 0.29; transform: translate(-50%,-50%) scale(0.97);}
-      50% { opacity: 0.61; transform: translate(-50%,-50%) scale(1.07);}
-      100% { opacity: 0.29; transform: translate(-50%,-50%) scale(0.97);}
+      0%,100% { transform: scale(1); opacity:0.8;}
+      60% { transform: scale(1.22); opacity:1;}
     }
     p {
-      font-size: 1.06rem;
+      font-size: 1.12rem;
       color: #bababa;
-      max-width: 420px;
+      max-width: 480px;
       margin-bottom: 3.3rem;
       margin-top: 0;
       animation: fadeInUp 0.7s 0.13s both;
@@ -272,38 +256,39 @@
       display: flex;
       align-items: center;
       width: 100%;
-      max-width: 415px;
+      max-width: 840px;
+      min-width: 350px;
       margin: 2rem auto 0 auto;
       background: var(--glass-bg);
-      border-radius: 1.08rem;
-      box-shadow: 0 1px 12px 0 #181b2312;
+      border-radius: 0.9rem;
+      box-shadow: 0 1px 16px 0 #181b2312;
       border: 1px solid var(--glass-border);
       backdrop-filter: blur(8px) brightness(1.01);
       padding: 0.30rem 0.33rem;
-      gap: 0.18rem;
+      gap: 0.2rem;
       z-index: 4;
       transition: box-shadow 0.18s, border 0.16s;
       animation: fadeInUp 0.8s 0.18s both;
       position: relative;
       overflow: visible;
-      min-height: 49px;
+      min-height: 54px;
     }
     .search-box:focus-within::before,
     .search-box:hover::before {
       opacity: 1;
-      transform: scale(1.03);
+      transform: scale(1.025);
     }
     .search-box::before {
       content: '';
       position: absolute;
-      inset: -6px;
-      border-radius: 1.1rem;
+      inset: -5px;
+      border-radius: 0.99rem;
       pointer-events: none;
       opacity: 0;
       z-index: 1;
-      background: radial-gradient(ellipse 65% 45% at 55% 60%, #10a37f11 30%, #1c232800 100%);
-      box-shadow: 0 0 16px 0 #10a37f0b;
-      transition: opacity 0.31s, transform 0.32s;
+      background: radial-gradient(ellipse 85% 60% at 55% 70%, #10a37f0a 30%, #1c232800 100%);
+      box-shadow: 0 0 14px 0 #10a37f0a;
+      transition: opacity 0.26s, transform 0.28s;
       animation: pulseHalo 4s infinite cubic-bezier(.61,.2,.39,.97);
     }
     @keyframes pulseHalo {
@@ -313,15 +298,15 @@
     }
     .ai-icon {
       position: absolute;
-      left: 17px;
+      left: 25px;
       top: 51%;
       transform: translateY(-50%);
-      width: 19px;
-      height: 19px;
+      width: 22px;
+      height: 22px;
       z-index: 3;
       pointer-events: none;
-      opacity: 0.8;
-      filter: drop-shadow(0 0 2px #10a37f33);
+      opacity: 0.82;
+      filter: drop-shadow(0 0 2px #10a37f18);
       animation: aiRotate 3.2s linear infinite;
       transition: opacity 0.18s;
     }
@@ -330,37 +315,36 @@
       100% { transform: translateY(-50%) rotate(360deg);}
     }
     .search-box input {
-      font-size: 1.01rem;
+      font-size: 1.08rem;
       font-family: inherit;
       background: #23282b;
       border: none;
       color: #e7eaea;
       outline: none;
-      padding: 0.47rem 1rem 0.47rem 2.1rem;
-      border-radius: 0.7rem;
-      margin-right: 0.11rem;
-      transition: box-shadow 0.15s, transform 0.15s;
-      box-shadow: 0 1px 6px 0 #181b2309 inset;
+      padding: 0.61rem 1.2rem 0.61rem 2.7rem;
+      border-radius: 0.6rem;
+      margin-right: 0.12rem;
+      transition: box-shadow 0.12s, transform 0.12s;
+      box-shadow: 0 1px 7px 0 #181b2309 inset;
       position: relative;
       z-index: 2;
       width: 100%;
       min-width: 0;
-      flex: 1 1 140px;
+      flex: 4 4 340px;
     }
-    /* Select stylé comme un bouton */
     .search-box select {
       background: #202522;
       color: #10a37f;
       font-weight: bold;
       border: none;
-      border-radius: 0.7rem;
-      font-size: 1rem;
-      padding: 0.45rem 0.9rem;
-      margin-right: 0.11rem;
+      border-radius: 0.6rem;
+      font-size: 1.06rem;
+      padding: 0.45rem 1.05rem;
+      margin-right: 0.12rem;
       outline: none;
-      transition: background 0.2s, color 0.15s;
-      box-shadow: 0 1px 3px #10a37f09 inset;
-      min-width: 97px;
+      transition: background 0.16s, color 0.11s;
+      box-shadow: 0 1px 2px #10a37f07 inset;
+      min-width: 110px;
       cursor: pointer;
       appearance: none;
     }
@@ -370,26 +354,26 @@
     }
     .search-box input:focus, .search-box select:focus, .bounce {
       box-shadow: 0 0 0 2px #10a37f22;
-      transform: scale(1.011);
+      transform: scale(1.009);
     }
     .search-box button {
       background: #10a37f;
       border: none;
       color: #f4f4f6;
-      font-size: 1.01rem;
+      font-size: 1.09rem;
       font-weight: 700;
-      padding: 0.43rem 1.21rem;
-      border-radius: 0.77rem;
+      padding: 0.52rem 2.3rem;
+      border-radius: 0.7rem;
       cursor: pointer;
-      transition: background 0.16s, color 0.17s, box-shadow 0.12s, transform 0.13s;
+      transition: background 0.13s, color 0.11s, box-shadow 0.1s, transform 0.09s;
       box-shadow: 0 1px 6px #10a37f12;
       outline: none;
       position: relative;
       z-index: 1;
       overflow: hidden;
       letter-spacing: 0.03em;
-      min-width: 70px;
-      min-height: 38px;
+      min-width: 120px;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -398,16 +382,16 @@
     .search-box button:hover, .search-box button:focus {
       background: #0b664d;
       color: #fff;
-      box-shadow: 0 0 9px 0 #10a37f16;
-      transform: scale(1.013);
+      box-shadow: 0 0 11px 0 #10a37f14;
+      transform: scale(1.012);
     }
     .search-box button:active {
       transform: scale(0.97);
     }
     .ripple-effect {
       position: absolute;
-      width: 62px; height: 62px;
-      background: radial-gradient(circle, #10a37f41 0, #23282b00 100%);
+      width: 70px; height: 70px;
+      background: radial-gradient(circle, #10a37f33 0, #23282b00 100%);
       border-radius: 100%;
       transform: translate(-50%,-50%) scale(0);
       pointer-events: none;
@@ -417,26 +401,26 @@
       z-index: 10;
     }
     @keyframes ripple-btn {
-      0% { transform: translate(-50%,-50%) scale(0); opacity: 0.18;}
+      0% { transform: translate(-50%,-50%) scale(0); opacity: 0.14;}
       70% { opacity: 0.04;}
-      100% { transform: translate(-50%,-50%) scale(1.04); opacity: 0;}
+      100% { transform: translate(-50%,-50%) scale(1.07); opacity: 0;}
     }
     #response {
       margin-top: 2.1rem;
-      max-width: 420px;
+      max-width: 520px;
       margin-left: auto; margin-right: auto;
       text-align: left;
-      font-size: 1.01rem;
+      font-size: 1.04rem;
       line-height: 1.53;
       z-index: 6;
       animation: fadeInUp 0.9s 0.4s both;
       position: relative;
     }
     .bubble {
-      background: #1c1f23ef;
+      background: #1c1f23f1;
       border: 1px solid #10a37f0b;
       border-radius: 11px;
-      padding: 13px 17px;
+      padding: 13px 20px;
       box-shadow: 0 2px 7px #10a37f10;
       animation: fadeInUp 1.3s 0.41s both;
       white-space: pre-wrap;
@@ -463,7 +447,7 @@
     footer {
       margin-top: 3.2rem;
       margin-bottom: 1.5rem;
-      font-size: 0.93rem;
+      font-size: 0.95rem;
       color: #bdbdbd;
       letter-spacing: 0.01em;
       text-align: center;
@@ -471,25 +455,30 @@
       animation: fadeInUp 2.3s 0.7s both;
       z-index: 2;
     }
-    @media (max-width: 650px) {
-      .oktoai-pulse { font-size: 1.35rem;}
-      .search-box { max-width: 97vw; padding: 0.12rem 0.2rem;}
+    @media (max-width: 1200px) {
+      .search-box { max-width: 99vw;}
+    }
+    @media (max-width: 700px) {
+      .oktoai-pulse { font-size: 1.3rem;}
+      .search-box { max-width: 97vw; min-width: 0;}
       .bubble { padding: 9px 4px;}
-      .oktoai-halo { width: 98px; height: 28px;}
+      .oktoai-flare { width: 108px; height: 22px;}
+      #response { max-width: 97vw;}
     }
   </style>
 </head>
 <body>
-  <div class="water-bg"></div>
   <div class="bg-ripples">
     <div class="ripple" style="left:8vw;top:18vh;"></div>
     <div class="ripple"></div>
     <div class="ripple"></div>
   </div>
   <div class="oktoai-anim">
-    <span class="oktoai-pulse">OktoAI</span>
+    <span class="oktoai-pulse">OktoAI
+      <span class="oktoai-scan"></span>
+    </span>
     <span class="oktoai-dot"></span>
-    <span class="oktoai-halo"></span>
+    <span class="oktoai-flare"></span>
   </div>
   <p>L’humain propulsé par l’intelligence.</p>
   <div class="search-box">
