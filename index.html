@@ -24,8 +24,31 @@
           case "you":
             url = `https://you.com/search?q=${encodeURIComponent(query)}`;
             break;
+          case "oktoai":
+            askAI(query);
+            return;
         }
         window.open(url, '_blank');
+      }
+    }
+
+    async function askAI(prompt) {
+      const responseDiv = document.getElementById("response");
+      responseDiv.innerHTML = "⏳ Chargement...";
+      try {
+        const res = await fetch("https://nodejs.pazgh.replit.dev/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: prompt })
+        });
+        const data = await res.json();
+        if (data.result) {
+          responseDiv.innerHTML = data.result;
+        } else {
+          responseDiv.innerHTML = "❌ Erreur: " + JSON.stringify(data);
+        }
+      } catch (error) {
+        responseDiv.innerHTML = "❌ Échec de la requête : " + error.message;
       }
     }
   </script>
@@ -144,6 +167,20 @@
       animation: fadeInUp 2s ease forwards;
       z-index: 2;
     }
+    #response {
+      margin-top: 20px;
+      background: #1c1f24;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      white-space: pre-wrap;
+      font-size: 1rem;
+      line-height: 1.5;
+      animation: fadeInUp 1.2s ease forwards;
+    }
   </style>
 </head>
 <body>
@@ -158,9 +195,12 @@
       <option value="google">Google</option>
       <option value="perplexity">Perplexity AI</option>
       <option value="you">You.com</option>
+      <option value="oktoai">OktoAI</option>
     </select>
     <button onclick="performSearch()">Envoyer</button>
   </div>
+
+  <div id="response"></div>
 
   <footer>© 2025 OktoAI. Tous droits réservés.</footer>
 </body>
