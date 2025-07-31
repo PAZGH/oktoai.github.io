@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OktoAI | Intelligence augmentée</title>
-  <meta http-equiv="refresh" content="0; url=https://oktoai.ca" />
+  <script>
+    // Redirige uniquement si on est sur www.oktoai.ca
+    if (window.location.hostname === "www.oktoai.ca") {
+      window.location.href = "https://oktoai.ca";
+    }
+  </script>
   <style>
     @keyframes fadeInUp {
       from {
