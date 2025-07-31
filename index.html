@@ -8,6 +8,12 @@
     if (window.location.hostname === "www.oktoai.ca") {
       window.location.href = "https://oktoai.ca";
     }
+    function searchGoogle() {
+      const query = document.getElementById("search-input").value;
+      if (query.trim()) {
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+      }
+    }
   </script>
   <style>
     @keyframes fadeInUp {
@@ -121,12 +127,12 @@
 <body>
   <div class="ai-background"></div>
   <div class="glow"></div>
-  <h1>Bienvenue chez OktoAI</h1>
-  <p>Nous combinons l'automatisation intelligente avec l'efficacité humaine pour livrer des solutions TI qui propulsent votre entreprise.</p>
+  <h1>OktoAI</h1>
+  <p>L’humain propulsé par l’intelligence.</p>
 
   <div class="search-box">
-    <input type="text" placeholder="Entrez votre question ou besoin..." disabled />
-    <button disabled>Envoyer</button>
+    <input type="text" id="search-input" placeholder="Posez votre question..." />
+    <button onclick="searchGoogle()">Envoyer</button>
   </div>
 
   <footer>© 2025 OktoAI. Tous droits réservés.</footer>
