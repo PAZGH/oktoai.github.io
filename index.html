@@ -64,27 +64,35 @@
       transform: scale(1.05);
       box-shadow: 0 0 15px #10a37fcc;
     }
-    .card {
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 3rem;
+      animation: fadeInUp 1.2s ease forwards;
+    }
+    .feature {
       background: #1e1e1e;
-      border: 1px solid #2a2a2a;
-      padding: 2rem;
-      margin-top: 2rem;
+      padding: 1.5rem;
       border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(0,255,200,0.05);
-      animation: fadeInUp 1.5s ease forwards;
+      width: 260px;
+      border: 1px solid #2b2b2b;
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.03);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .card h2 {
-      font-size: 1.5rem;
+    .feature:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(0, 255, 200, 0.1);
+    }
+    .feature h3 {
       color: #10a37f;
-      margin-bottom: 1rem;
-    }
-    .card ul {
-      list-style: none;
-      padding: 0;
-    }
-    .card li {
       margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    .feature p {
       color: #ccc;
+      font-size: 0.95rem;
     }
     .glow {
       position: absolute;
@@ -110,14 +118,23 @@
   <p>Nous combinons l'automatisation intelligente avec l'efficacité humaine pour livrer des solutions TI qui propulsent votre entreprise.</p>
   <a class="button" href="#">Contactez-nous</a>
 
-  <div class="card">
-    <h2>Nos services</h2>
-    <ul>
-      <li>🔐 Sécurité & Microsoft Defender</li>
-      <li>☁️ Migration infonuagique (Azure/M365)</li>
-      <li>🤖 Automatisation PowerShell / NinjaOne</li>
-      <li>📊 Gouvernance TI & tableaux de bord</li>
-    </ul>
+  <div class="features">
+    <div class="feature">
+      <h3>🔐 Sécurité</h3>
+      <p>Déploiement avancé de Microsoft Defender, gestion proactive des menaces et durcissement des postes.</p>
+    </div>
+    <div class="feature">
+      <h3>☁️ Cloud Azure & M365</h3>
+      <p>Migration infonuagique complète avec gouvernance, Intune, Exchange, SharePoint et plus.</p>
+    </div>
+    <div class="feature">
+      <h3>🤖 Automatisation</h3>
+      <p>Scripts PowerShell, NinjaOne, intégration API – zéro clic, 100% automatisé.</p>
+    </div>
+    <div class="feature">
+      <h3>📊 Gouvernance TI</h3>
+      <p>vCIO, tableaux de bord, Secure Score, planification stratégique et alignement avec les affaires.</p>
+    </div>
   </div>
 
   <footer>© 2025 OktoAI. Tous droits réservés.</footer>
