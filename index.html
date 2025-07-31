@@ -8,7 +8,6 @@
     if (window.location.hostname === "www.oktoai.ca") {
       window.location.href = "https://oktoai.ca";
     }
-
     function performSearch() {
       const query = document.getElementById("search-input").value;
       const engine = document.getElementById("engine-select").value;
@@ -31,7 +30,6 @@
         window.open(url, '_blank');
       }
     }
-
     async function askAI(prompt) {
       const responseDiv = document.getElementById("response");
       responseDiv.innerHTML = '<span class="loader"></span>'; // animation
@@ -43,7 +41,7 @@
         });
         const data = await res.json();
         if (data.result) {
-          responseDiv.innerHTML = `<div class='bubble'>${data.result}</div>`;
+          responseDiv.innerHTML = `<div class='bubble animated-pop'>${data.result}</div>`;
         } else {
           responseDiv.innerHTML = "❌ Erreur: " + JSON.stringify(data);
         }
@@ -51,6 +49,83 @@
         responseDiv.innerHTML = "❌ Échec de la requête : " + error.message;
       }
     }
+    // Bouton effet d'ondulation
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.querySelector('.search-box button');
+      if(btn) {
+        btn.addEventListener('click', function(e){
+          let ripple = document.createElement('span');
+          ripple.className = 'ripple-effect';
+          let rect = btn.getBoundingClientRect();
+          ripple.style.left = `${e.clientX - rect.left}px`;
+          ripple.style.top = `${e.clientY - rect.top}px`;
+          btn.appendChild(ripple);
+          setTimeout(()=>{ripple.remove()}, 600);
+        });
+      }
+    });
+    // Effet rebond sur input/select
+    document.addEventListener('DOMContentLoaded', function() {
+      ['#search-input','#engine-select'].forEach(sel=>{
+        const el=document.querySelector(sel);
+        if(el) {
+          el.addEventListener('focus',()=>el.classList.add('bounce'));
+          el.addEventListener('blur',()=>el.classList.remove('bounce'));
+        }
+      });
+    });
+    // Particules
+    document.addEventListener("DOMContentLoaded", function(){
+      const canvas = document.createElement('canvas');
+      canvas.id = 'particles';
+      canvas.style.position = 'fixed';
+      canvas.style.top = 0;
+      canvas.style.left = 0;
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.zIndex = 1;
+      canvas.style.pointerEvents = 'none';
+      document.body.prepend(canvas);
+      const ctx = canvas.getContext('2d');
+      let dpr = window.devicePixelRatio || 1;
+      let W = window.innerWidth, H = window.innerHeight;
+      let particles = [];
+      function resize() {
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width = W*dpr; canvas.height = H*dpr;
+        canvas.style.width = W+'px'; canvas.style.height = H+'px';
+      }
+      resize(); window.addEventListener('resize', resize);
+      for(let i=0; i<38; i++) {
+        let angle = Math.random()*2*Math.PI;
+        particles.push({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          r: 1.2+Math.random()*2.5,
+          dx: Math.cos(angle)*0.25 + Math.random()*0.23,
+          dy: Math.sin(angle)*0.25 + Math.random()*0.23,
+          color: i%3==0 ? "#00ffd0bb" : (i%3==1 ? "#8e2de2aa" : "#10a37faa")
+        });
+      }
+      function anim() {
+        ctx.clearRect(0,0,W*dpr,H*dpr);
+        for(const p of particles){
+          p.x += p.dx; p.y += p.dy;
+          if(p.x < 0) p.x = W;
+          if(p.x > W) p.x = 0;
+          if(p.y < 0) p.y = H;
+          if(p.y > H) p.y = 0;
+          ctx.beginPath();
+          ctx.arc(p.x*dpr, p.y*dpr, p.r*dpr, 0, 2*Math.PI);
+          ctx.fillStyle = p.color;
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 10*dpr;
+          ctx.fill();
+        }
+        requestAnimationFrame(anim);
+      }
+      anim();
+    });
   </script>
   <style>
     :root {
@@ -61,25 +136,34 @@
       --glass-bg: rgba(24,27,35,0.80);
       --glass-border: rgba(80,255,220,0.10);
     }
-
     html, body {
       height: 100%;
     }
     body {
       min-height: 100vh;
       font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       color: #fff;
-      background: linear-gradient(135deg, #101018 0%, #181b23 90%);
+      background: radial-gradient(ellipse 75% 90% at 60% 10%, #181b23 55%, #101018 100%);
       overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       position: relative;
     }
-
+    /* Water ripple mouvant overlay */
+    .water-bg {
+      pointer-events: none;
+      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+      z-index: 2;
+      background: repeating-radial-gradient(circle at 20% 20%, #00ffd026 0, #8e2de224 30%, #181b2300 80%);
+      animation: waterMove 17s cubic-bezier(.5,0,.5,1) infinite alternate;
+      opacity: 0.19;
+    }
+    @keyframes waterMove {
+      0% { background-position: 0% 0%; filter: blur(5px) brightness(1.09);}
+      40% { background-position: 50% 30%; filter: blur(11px) brightness(1);}
+      70% { background-position: 70% 80%; filter: blur(6px) brightness(1.11);}
+      100% { background-position: 0% 0%; filter: blur(8px) brightness(1.07);}
+    }
     /* ----- BACKGROUND RIPPLE ANIMATION ----- */
     .bg-ripples {
       position: fixed;
@@ -91,70 +175,100 @@
     }
     .ripple {
       position: absolute;
-      width: 600px;
-      height: 600px;
+      width: 580px; height: 580px;
       border-radius: 50%;
-      background: radial-gradient(circle, #00ffc975 20%, #8e2de215 60%, #181b2300 100%);
+      background: radial-gradient(circle, #00ffc979 25%, #8e2de219 60%, #181b2300 100%);
       filter: blur(60px);
       opacity: 0.6;
       animation: rippleMove 12s linear infinite;
     }
     .ripple:nth-child(2) {
-      left: 55vw; top: 60vh;
-      background: radial-gradient(circle, #8e2de275 30%, #10a37f15 80%, #181b2300 100%);
-      width: 440px; height: 440px;
+      left: 55vw; top: 63vh;
+      background: radial-gradient(circle, #8e2de279 36%, #10a37f19 85%, #181b2300 100%);
+      width: 420px; height: 420px;
       animation-delay: 4s;
       opacity: 0.5;
-      filter: blur(40px);
+      filter: blur(38px);
     }
     .ripple:nth-child(3) {
-      left: 70vw; top: 10vh;
-      background: radial-gradient(circle, #10a37f90 0%, #00ffcc30 80%, #181b2300 100%);
-      width: 380px; height: 380px;
+      left: 73vw; top: 7vh;
+      background: radial-gradient(circle, #10a37f90 0%, #00ffcc25 80%, #181b2300 100%);
+      width: 340px; height: 340px;
       animation-delay: 7s;
       opacity: 0.3;
-      filter: blur(50px);
+      filter: blur(41px);
     }
     @keyframes rippleMove {
       0% { transform: translateY(0) scale(1);}
       50% { transform: translateY(-30px) scale(1.06);}
       100% { transform: translateY(0) scale(1);}
     }
-
     /* ---- HEADER ---- */
     h1 {
       font-size: 3.2rem;
       margin-top: 2vh;
-      margin-bottom: 0.7rem;
+      margin-bottom: 0.6rem;
       background: linear-gradient(90deg, var(--okto-mauve), var(--okto-cyan), var(--okto-green), var(--okto-mauve));
       background-size: 300% 100%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: gradientWave 7s ease-in-out infinite alternate;
       letter-spacing: -1.5px;
-      z-index: 2;
-      filter: drop-shadow(0 4px 12px #181b2355);
+      z-index: 4;
+      filter: drop-shadow(0 4px 14px #181b2355);
       transition: text-shadow 0.2s;
       cursor: pointer;
       user-select: none;
+      position: relative;
+      overflow: visible;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      position: absolute;
+      left: 60%;
+      top: 72%;
+      width: 80px; height: 13px;
+      background: linear-gradient(90deg, #00ffd0 30%, #8e2de2cc 90%);
+      opacity: 0.17;
+      filter: blur(10px);
+      border-radius: 50%;
+      transform: translateX(-40%) scaleX(1.2);
+      animation: shineTitle 2.9s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
     }
     @keyframes gradientWave {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+    @keyframes shineTitle {
+      0% { opacity: 0.12;}
+      60% { opacity: 0.22;}
+      100% { opacity: 0.09;}
+    }
     h1:hover { text-shadow: 0 0 40px #00ffcc80, 0 0 16px #181b2360; }
-
+    .animated-pop {
+      animation: popIn 0.45s cubic-bezier(.42,2,.21,0.98);
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.7);}
+      60% { opacity: 1; transform: scale(1.08);}
+      80% { transform: scale(0.96);}
+      100% { opacity: 1; transform: scale(1);}
+    }
     /* ---- SUBTITLE ---- */
     p {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: #bdbdbd;
       max-width: 600px;
       margin-bottom: 2rem;
       margin-top: 0;
-      animation: fadeInUp 0.7s 0.15s both;
+      animation: fadeInUp 0.7s 0.13s both;
+      z-index: 4;
+      position: relative;
     }
-
     /* ---- SEARCH BOX ---- */
     .search-box {
       display: flex;
@@ -169,9 +283,11 @@
       backdrop-filter: blur(11px) brightness(1.1);
       padding: 0.5rem 0.7rem;
       gap: 0.4rem;
-      z-index: 2;
+      z-index: 4;
       transition: box-shadow 0.3s, border 0.3s;
       animation: fadeInUp 0.8s 0.18s both;
+      position: relative;
+      overflow: visible;
     }
     .search-box:focus-within, .search-box:hover {
       box-shadow: 0 4px 64px 0 #00ffc930, 0 2px 0px #8e2de222;
@@ -187,7 +303,7 @@
       padding: 0.66rem 1rem;
       border-radius: 1rem;
       margin-right: 0.15rem;
-      transition: box-shadow 0.23s;
+      transition: box-shadow 0.19s, transform 0.17s;
       box-shadow: 0 2px 16px 0 #181b230f inset;
     }
     .search-box select {
@@ -200,8 +316,9 @@
       cursor: pointer;
       appearance: none;
     }
-    .search-box input:focus {
-      box-shadow: 0 0 0 2px #10a37f55;
+    .search-box input:focus, .search-box select:focus, .bounce {
+      box-shadow: 0 0 0 2.5px #10a37fa4;
+      transform: scale(1.035);
     }
     .search-box button {
       background: linear-gradient(90deg, #10a37f, #00ffcc 65%, #8e2de2 95%);
@@ -217,28 +334,47 @@
       outline: none;
       position: relative;
       z-index: 1;
+      overflow: hidden;
     }
     .search-box button:hover, .search-box button:focus {
       background: linear-gradient(90deg, #8e2de2, #00ffcc 45%, #10a37f 95%);
       color: #fff;
       box-shadow: 0 0 24px 0 #10a37f33;
-      transform: scale(1.03);
+      transform: scale(1.04);
     }
     .search-box button:active {
       transform: scale(0.98);
     }
-
+    /* Effet d'ondulation sur bouton */
+    .ripple-effect {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      background: radial-gradient(circle, #00ffc973 0, #10a37f00 85%);
+      border-radius: 100%;
+      transform: translate(-50%,-50%) scale(0);
+      pointer-events: none;
+      left: 50%;
+      top: 50%;
+      animation: ripple-btn .6s cubic-bezier(.24,.6,.32,1.21);
+      z-index: 10;
+    }
+    @keyframes ripple-btn {
+      0% { transform: translate(-50%,-50%) scale(0); opacity: 0.5;}
+      70% { opacity: 0.3;}
+      100% { transform: translate(-50%,-50%) scale(1.2); opacity: 0;}
+    }
     /* ---- RESPONSE BUBBLE ---- */
     #response {
-      margin-top: 2.4rem;
+      margin-top: 2.3rem;
       max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-left: auto; margin-right: auto;
       text-align: left;
       font-size: 1.11rem;
       line-height: 1.54;
-      z-index: 3;
+      z-index: 6;
       animation: fadeInUp 0.9s 0.4s both;
+      position: relative;
     }
     .bubble {
       background: rgba(32,38,48,0.95);
@@ -265,13 +401,11 @@
       0% { transform: rotate(0deg);}
       100% { transform: rotate(360deg);}
     }
-
     /* Fade in up animation */
     @keyframes fadeInUp {
       0% { opacity: 0; transform: translateY(30px);}
       100% { opacity: 1; transform: translateY(0);}
     }
-
     /* ---- FOOTER ---- */
     footer {
       margin-top: 4rem;
@@ -284,26 +418,6 @@
       animation: fadeInUp 2.3s 0.7s both;
       z-index: 2;
     }
-
-    /* Glass reflection on search box */
-    .search-box::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 1.5rem;
-      pointer-events: none;
-      opacity: 0.19;
-      background: linear-gradient(120deg, #fff6 10%, #00ffcc20 30%, #fff0 80%);
-      z-index: 10;
-      animation: glassLight 4s ease-in-out infinite alternate;
-    }
-    @keyframes glassLight {
-      0% { opacity: 0.18; }
-      100% { opacity: 0.31;}
-    }
-
     /* Make everything responsive */
     @media (max-width: 650px) {
       h1 { font-size: 2rem;}
@@ -313,11 +427,13 @@
   </style>
 </head>
 <body>
+  <div class="water-bg"></div>
   <div class="bg-ripples">
     <div class="ripple" style="left:8vw;top:12vh;"></div>
     <div class="ripple"></div>
     <div class="ripple"></div>
   </div>
+  <!-- Le canvas des particules est ajouté dynamiquement par JS -->
   <h1>OktoAI</h1>
   <p>L’humain propulsé par l’intelligence.</p>
   <div class="search-box">
