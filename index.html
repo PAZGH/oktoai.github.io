@@ -509,11 +509,9 @@
     <div id="response"></div>
     <footer>© 2025 OktoAI. Tous droits réservés.</footer>
   </div>
-
-  <!-- SCRIPT AI MESH FINAL STABLE -->
+  <!-- SCRIPT AI MESH FINAL iOS SAFE -->
   <script>
   (function(){
-    // Lance seulement quand le DOM, le body et .gradient-background sont présents
     function ready(fn) {
       if (
         document.readyState !== 'loading' &&
@@ -527,7 +525,7 @@
     }
 
     ready(function(){
-      if (document.querySelector('.mesh-canvas')) return; // Évite le double ajout
+      if (document.querySelector('.mesh-canvas')) return;
       const bg = document.body.querySelector('.gradient-background');
       const canvas = document.createElement('canvas');
       canvas.className = 'mesh-canvas';
@@ -547,7 +545,21 @@
         canvas.style.height = H + 'px';
       }
       safeResize();
-      if (!isMobile) window.addEventListener('resize', safeResize);
+
+      if (!isMobile) {
+        window.addEventListener('resize', () => {
+          safeResize();
+          setTimeout(createNodes, 400);
+        });
+      } else {
+        // Sur mobile/iOS, resize UNIQUEMENT au changement d’orientation
+        window.addEventListener('orientationchange', () => {
+          setTimeout(() => {
+            safeResize();
+            createNodes();
+          }, 300);
+        });
+      }
 
       const NODE_COLOR = "#16e0ae";
       const LINK_COLOR = "#16e0ae88";
@@ -573,21 +585,12 @@
       }
       createNodes();
 
-      if (!isMobile) {
-        window.addEventListener('resize', () => {
-          safeResize();
-          setTimeout(createNodes, 400);
-        });
-      }
-
       function distance(a, b) {
         return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
       }
 
       function animate() {
         ctx.clearRect(0, 0, W * dpr, H * dpr);
-
-        // Lignes réseau
         for (let i = 0; i < nodes.length; i++) {
           for (let j = i + 1; j < nodes.length; j++) {
             let a = nodes[i], b = nodes[j];
@@ -607,8 +610,6 @@
             }
           }
         }
-
-        // Points réseau
         for (const node of nodes) {
           let pulse = 0.92 + Math.sin(t / 120 + node.x / 400 + node.y / 290) * 0.22;
           ctx.save();
@@ -628,7 +629,6 @@
           node.x += Math.sin(t / 240 + node.x / 400) * (isMobile ? 0.04 : 0.09);
           node.y += Math.cos(t / 210 + node.y / 230) * (isMobile ? 0.04 : 0.09);
         }
-
         t += 0.45;
         requestAnimationFrame(animate);
       }
