@@ -49,31 +49,11 @@
         responseDiv.innerHTML = "❌ Échec de la requête : " + error.message;
       }
     }
-    // Ripple, rebond et neural network BG
+    // Animation réseau AI canvas
     document.addEventListener('DOMContentLoaded', function() {
-      // Ripple
-      const btn = document.querySelector('.search-box button');
-      if(btn) {
-        btn.addEventListener('click', function(e){
-          let ripple = document.createElement('span');
-          ripple.className = 'ripple-effect';
-          let rect = btn.getBoundingClientRect();
-          ripple.style.left = `${e.clientX - rect.left}px`;
-          ripple.style.top = `${e.clientY - rect.top}px`;
-          btn.appendChild(ripple);
-          setTimeout(()=>{ripple.remove()}, 550);
-        });
-      }
-      ['#search-input','#engine-select'].forEach(sel=>{
-        const el=document.querySelector(sel);
-        if(el) {
-          el.addEventListener('focus',()=>el.classList.add('bounce'));
-          el.addEventListener('blur',()=>el.classList.remove('bounce'));
-        }
-      });
-      // Neural Network BG
+      // -- Canvas network mesh --
       const canvas = document.createElement('canvas');
-      canvas.id = 'ai-net-bg';
+      canvas.id = 'network-bg';
       canvas.style.position = 'fixed';
       canvas.style.top = 0;
       canvas.style.left = 0;
@@ -82,74 +62,101 @@
       canvas.style.zIndex = 1;
       canvas.style.pointerEvents = 'none';
       document.body.prepend(canvas);
+
       const ctx = canvas.getContext('2d');
       let dpr = window.devicePixelRatio || 1;
       let W = window.innerWidth, H = window.innerHeight;
+
       function resize() {
-        W = window.innerWidth; H = window.innerHeight;
-        canvas.width = W*dpr; canvas.height = H*dpr;
-        canvas.style.width = W+'px'; canvas.style.height = H+'px';
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = W+'px';
+        canvas.style.height = H+'px';
       }
       resize(); window.addEventListener('resize', resize);
-      // Nodes + links pour effet réseau
+
+      // Network nodes
+      const NODE_COLOR = "#16e0ae";
+      const LINK_COLOR = "#16e0ae88";
+      const NODE_COUNT = Math.max(28, Math.floor(W/36));
       let nodes = [];
-      let links = [];
-      for(let i=0; i<24; i++){
-        nodes.push({
-          x: Math.random()*W,
-          y: Math.random()*H,
-          dx: (Math.random()-0.5)*0.19,
-          dy: (Math.random()-0.5)*0.19
-        });
+      let t = 0;
+
+      function randomSpeed() {
+        return (Math.random()-0.5)*0.07;
       }
-      // Linker chaque node à 2 autres
-      for(let i=0;i<nodes.length;i++){
-        let other = (i+Math.floor(Math.random()*6)+1)%nodes.length;
-        let other2 = (i+Math.floor(Math.random()*12)+3)%nodes.length;
-        links.push([i,other]);
-        links.push([i,other2]);
+
+      function createNodes() {
+        nodes = [];
+        for(let i=0; i<NODE_COUNT; i++) {
+          nodes.push({
+            x: Math.random()*W,
+            y: Math.random()*H,
+            dx: randomSpeed(),
+            dy: randomSpeed()
+          });
+        }
       }
-      let time = 0;
-      function anim(){
+      createNodes();
+      window.addEventListener('resize', ()=>setTimeout(createNodes,400));
+
+      function distance(a, b) {
+        return Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2);
+      }
+
+      function animate() {
         ctx.clearRect(0,0,W*dpr,H*dpr);
-        // Lignes connectées
-        ctx.save();
-        ctx.globalAlpha = 0.23;
-        ctx.strokeStyle = "#19b691";
-        ctx.lineWidth = 1.1;
-        for(const [a,b] of links){
-          ctx.beginPath();
-          ctx.moveTo(nodes[a].x*dpr, nodes[a].y*dpr);
-          ctx.lineTo(nodes[b].x*dpr, nodes[b].y*dpr);
-          ctx.stroke();
+
+        // Draw links
+        for(let i=0; i<nodes.length; i++) {
+          for(let j=i+1; j<nodes.length; j++) {
+            let a = nodes[i], b = nodes[j];
+            let dist = distance(a, b);
+            if (dist < 190) {
+              ctx.save();
+              ctx.globalAlpha = 0.14 + 0.14 * Math.cos((t/160) + (i+j)/9);
+              ctx.strokeStyle = LINK_COLOR;
+              ctx.lineWidth = 1.1;
+              ctx.beginPath();
+              ctx.moveTo(a.x*dpr, a.y*dpr);
+              ctx.lineTo(b.x*dpr, b.y*dpr);
+              ctx.shadowColor = "#16e0ae18";
+              ctx.shadowBlur = 4*dpr;
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
         }
-        ctx.restore();
-        // Nodes (points lumineux)
-        ctx.save();
-        for(const node of nodes){
-          let pulse = 0.9 + Math.sin(time/140 + node.x/200 + node.y/200)*0.19;
+
+        // Draw nodes
+        for(const node of nodes) {
+          let pulse = 0.92 + Math.sin(t/120 + node.x/400 + node.y/290)*0.22;
+          ctx.save();
           ctx.beginPath();
-          ctx.arc(node.x*dpr, node.y*dpr, 2.5*pulse*dpr, 0, 2*Math.PI);
-          ctx.fillStyle = "#10a37f" + Math.floor(24+24*pulse).toString(16);
-          ctx.shadowColor = "#10a37f";
+          ctx.arc(node.x*dpr, node.y*dpr, 2.2*pulse*dpr, 0, 2*Math.PI);
+          ctx.fillStyle = NODE_COLOR;
+          ctx.globalAlpha = 0.36+0.22*pulse;
+          ctx.shadowColor = NODE_COLOR;
           ctx.shadowBlur = 8*dpr*pulse;
-          ctx.globalAlpha = 0.33+0.25*pulse;
           ctx.fill();
-        }
-        ctx.restore();
-        // Bouge les nodes très lentement, effet réseau vivant
-        for(const node of nodes){
+          ctx.restore();
+
+          // Move
           node.x += node.dx; node.y += node.dy;
-          if(node.x < 0 || node.x > W) node.dx *= -1;
-          if(node.y < 0 || node.y > H) node.dy *= -1;
-          // Légère dérive sinus pour naturel
-          node.x += Math.sin(time/180+node.x/170)*0.09;
-          node.y += Math.cos(time/190+node.y/200)*0.09;
+          // Bounce
+          if (node.x < 0 || node.x > W) node.dx *= -1;
+          if (node.y < 0 || node.y > H) node.dy *= -1;
+          // Natural drift
+          node.x += Math.sin(t/240 + node.x/400)*0.09;
+          node.y += Math.cos(t/210 + node.y/230)*0.09;
         }
-        time += 0.4;
-        requestAnimationFrame(anim);
+
+        t += 0.5;
+        requestAnimationFrame(animate);
       }
-      anim();
+      animate();
     });
   </script>
   <style>
@@ -170,7 +177,6 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       position: relative;
     }
-    /* --- OktoAI --- */
     .oktoai-anim {
       display: flex;
       align-items: center;
@@ -188,13 +194,13 @@
       border-radius: 60% 80%;
       background: radial-gradient(ellipse 100% 65% at 53% 60%, #10a37f11 30%, #181b2300 100%);
       filter: blur(8px);
-      opacity: 0.22;
+      opacity: 0.18;
       z-index: -1;
       animation: haloAnim 5.2s cubic-bezier(.6,.13,.65,.94) infinite alternate;
     }
     @keyframes haloAnim {
       0% { opacity: 0.11; transform: translate(-50%,-50%) scale(0.99);}
-      50% { opacity: 0.22; transform: translate(-50%,-50%) scale(1.09);}
+      50% { opacity: 0.18; transform: translate(-50%,-50%) scale(1.09);}
       100% { opacity: 0.11; transform: translate(-50%,-50%) scale(0.99);}
     }
     .oktoai-pulse {
@@ -258,7 +264,6 @@
       position: relative;
       text-align: center;
     }
-    /* ---- SEARCH BOX ---- */
     .search-box {
       display: flex;
       align-items: center;
@@ -392,8 +397,7 @@
       padding: 0.52rem 2.3rem;
       border-radius: 0.7rem;
       cursor: pointer;
-      transition: background 0.13s, color 0.11s
-      , box-shadow 0.1s, transform 0.09s;
+      transition: background 0.13s, color 0.11s, box-shadow 0.1s, transform 0.09s;
       box-shadow: 0 1px 6px #10a37f12;
       outline: none;
       position: relative;
@@ -524,4 +528,3 @@
   <footer>© 2025 OktoAI. Tous droits réservés.</footer>
 </body>
 </html>
-
