@@ -3,192 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OktoAI | Intelligence augmentée</title>
-  <script>
-    if (window.location.hostname === "www.oktoai.ca") {
-      window.location.href = "https://oktoai.ca";
-    }
-
-    function showError(message) {
-      const errorDiv = document.getElementById("error-message");
-      errorDiv.textContent = "❌ " + message;
-      errorDiv.style.display = "block";
-    }
-
-    function hideError() {
-      document.getElementById("error-message").style.display = "none";
-    }
-
-    function showLoading() {
-      document.getElementById("loading").style.display = "block";
-      document.getElementById("response-box").style.display = "none";
-    }
-
-    function hideLoading() {
-      document.getElementById("loading").style.display = "none";
-    }
-
-    function showResponse(text) {
-      const box = document.getElementById("response-box");
-      box.textContent = text;
-      box.style.display = "block";
-    }
-
-    function performSearch() {
-      hideError();
-      showLoading();
-      const query = document.getElementById("search-input").value;
-      const engine = document.getElementById("engine-select").value;
-
-      if (query.trim()) {
-        switch (engine) {
-          case "google":
-            hideLoading();
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-            break;
-          case "perplexity":
-            hideLoading();
-            window.open(`https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`, '_blank');
-            break;
-          case "you":
-            hideLoading();
-            window.open(`https://you.com/search?q=${encodeURIComponent(query)}`, '_blank');
-            break;
-          case "okto":
-            fetch("https://8590c13a-96d1-4f5c-b2fa-3877dde62c30-00-3mfhc1zfhiy3e.worf.replit.dev/ask", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ prompt: query }),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                hideLoading();
-                showResponse(data.result || "(Aucune réponse reçue)");
-              })
-              .catch((err) => {
-                hideLoading();
-                showError("Erreur lors de l'appel à OktoAI.");
-                console.error(err);
-              });
-            break;
-        }
-      } else {
-        hideLoading();
-      }
-    }
-  </script>
+  <title>OktoAI</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(ellipse at top left, #121212 0%, #0f0f0f 100%);
-      color: #ffffff;
+      background-color: #0e0e0e;
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       text-align: center;
-      padding: 2rem;
-      overflow-x: hidden;
-      position: relative;
     }
     h1 {
+      color: #00e6aa;
       font-size: 3rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(90deg, #10a37f, #00ffcc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.2rem;
     }
-    p {
-      font-size: 1.25rem;
-      max-width: 600px;
+    .sub {
+      font-size: 1.2rem;
       margin-bottom: 2rem;
-      color: #bdbdbd;
     }
-    .search-box {
-      background-color: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 1rem;
+    .form-container {
       display: flex;
-      align-items: center;
-      padding: 1rem;
-      margin-top: 2rem;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 600px;
-      gap: 0.5rem;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      background-color: #1c1c1c;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 2rem;
     }
-    .search-box input, .search-box select {
-      background-color: #2a2a2a;
+    input, select, button {
+      padding: 10px;
       border: none;
-      outline: none;
-      color: #fff;
+      border-radius: 6px;
       font-size: 1rem;
-      flex: 1;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
     }
-    .search-box button {
-      background-color: #10a37f;
-      border: none;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
+    input, select {
+      width: 250px;
+    }
+    button {
+      background-color: #00e6aa;
+      color: black;
       font-weight: bold;
       cursor: pointer;
     }
-    .search-box button:hover {
-      background-color: #0e8e6b;
+    button:hover {
+      background-color: #00b488;
     }
-    #error-message {
-      color: #ff6666;
-      font-size: 1rem;
-      margin-top: 1rem;
-      display: none;
-    }
-    #loading {
-      display: none;
-      margin-top: 1rem;
-      font-style: italic;
-      color: #10a37f;
-    }
-    #response-box {
-      display: none;
-      margin-top: 1.5rem;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      padding: 1rem;
-      border-radius: 1rem;
+    #output {
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+      min-width: 300px;
       max-width: 600px;
-      white-space: pre-wrap;
+      margin-bottom: 1rem;
     }
-    footer {
-      margin-top: 3rem;
-      font-size: 0.875rem;
-      color: #888;
+    .footer {
+      margin-top: auto;
+      font-size: 0.9rem;
+      color: gray;
+    }
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #00e6aa;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
   <h1>OktoAI</h1>
-  <p>L’humain propulsé par l’intelligence.</p>
+  <p class="sub">L’humain propulsé par l’intelligence.</p>
 
-  <div class="search-box">
-    <input type="text" id="search-input" placeholder="Posez votre question..." />
-    <select id="engine-select">
-      <option value="google">Google</option>
-      <option value="perplexity">Perplexity AI</option>
-      <option value="you">You.com</option>
-      <option value="okto">OktoAI</option>
+  <div class="form-container">
+    <input type="text" id="prompt" placeholder="Pose ta question..." />
+    <select id="engine">
+      <option value="OktoAI">OktoAI</option>
     </select>
-    <button onclick="performSearch()">Envoyer</button>
+    <button onclick="askQuestion()">Envoyer</button>
   </div>
 
-  <div id="loading">Chargement...</div>
-  <div id="response-box"></div>
-  <div id="error-message"></div>
+  <div id="output">(Aucune réponse reçue)</div>
 
-  <footer>© 2025 OktoAI. Tous droits réservés.</footer>
+  <div class="footer">
+    © 2025 OktoAI. Tous droits réservés.
+  </div>
+
+  <script>
+    const API_URL = "https://8590c13a-96d1-4f5c-b2fa-3877dde62c30-00-3mfhc1zfhiy3e.worf.replit.dev/ask";
+
+    async function askQuestion() {
+      const prompt = document.getElementById("prompt").value;
+      const outputDiv = document.getElementById("output");
+
+      if (!prompt.trim()) {
+        outputDiv.innerHTML = "<p>❗ Entrée vide. Pose une vraie question.</p>";
+        return;
+      }
+
+      outputDiv.innerHTML = `<span class="loader"></span> Réflexion en cours...`;
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+
+        if (data.result) {
+          outputDiv.innerHTML = `<p>${data.result}</p>`;
+        } else {
+          outputDiv.innerHTML = `<p>❌ Aucune réponse obtenue.</p>`;
+        }
+      } catch (err) {
+        outputDiv.innerHTML = `<p>⚠️ Erreur lors de la requête à l’API.</p>`;
+      }
+    }
+  </script>
 </body>
 </html>
