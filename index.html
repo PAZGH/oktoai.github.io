@@ -48,51 +48,39 @@
       color: #bdbdbd;
       animation: fadeInUp 0.8s ease forwards;
     }
-    a.button {
-      background-color: #10a37f;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      animation: fadeInUp 1s ease forwards;
-      box-shadow: 0 0 10px #10a37f88;
-    }
-    a.button:hover {
-      background-color: #0e8e6b;
-      transform: scale(1.05);
-      box-shadow: 0 0 15px #10a37fcc;
-    }
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 3rem;
-      animation: fadeInUp 1.2s ease forwards;
-    }
-    .feature {
-      background: #1e1e1e;
-      padding: 1.5rem;
+    .search-box {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
       border-radius: 1rem;
-      width: 260px;
-      border: 1px solid #2b2b2b;
-      box-shadow: 0 0 20px rgba(0, 255, 200, 0.03);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      animation: fadeInUp 1s ease forwards;
+      width: 100%;
+      max-width: 500px;
     }
-    .feature:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 30px rgba(0, 255, 200, 0.1);
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 1rem;
+      flex: 1;
     }
-    .feature h3 {
-      color: #10a37f;
-      margin-bottom: 0.5rem;
-      font-size: 1.2rem;
+    .search-box button {
+      background-color: #10a37f;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
-    .feature p {
-      color: #ccc;
-      font-size: 0.95rem;
+    .search-box button:hover {
+      background-color: #0e8e6b;
     }
     .glow {
       position: absolute;
@@ -116,25 +104,10 @@
   <div class="glow"></div>
   <h1>Bienvenue chez OktoAI</h1>
   <p>Nous combinons l'automatisation intelligente avec l'efficacité humaine pour livrer des solutions TI qui propulsent votre entreprise.</p>
-  <a class="button" href="#">Contactez-nous</a>
 
-  <div class="features">
-    <div class="feature">
-      <h3>🔐 Sécurité</h3>
-      <p>Déploiement avancé de Microsoft Defender, gestion proactive des menaces et durcissement des postes.</p>
-    </div>
-    <div class="feature">
-      <h3>☁️ Cloud Azure & M365</h3>
-      <p>Migration infonuagique complète avec gouvernance, Intune, Exchange, SharePoint et plus.</p>
-    </div>
-    <div class="feature">
-      <h3>🤖 Automatisation</h3>
-      <p>Scripts PowerShell, NinjaOne, intégration API – zéro clic, 100% automatisé.</p>
-    </div>
-    <div class="feature">
-      <h3>📊 Gouvernance TI</h3>
-      <p>vCIO, tableaux de bord, Secure Score, planification stratégique et alignement avec les affaires.</p>
-    </div>
+  <div class="search-box">
+    <input type="text" placeholder="Entrez votre question ou besoin..." disabled />
+    <button disabled>Envoyer</button>
   </div>
 
   <footer>© 2025 OktoAI. Tous droits réservés.</footer>
