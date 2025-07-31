@@ -401,7 +401,7 @@
       100% { transform: rotate(360deg);}
     }
     @keyframes fadeInUp {
-       0% { opacity: 0; transform: translateY(15px);}
+      0% { opacity: 0; transform: translateY(15px);}
       100% { opacity: 1; transform: translateY(0);}
     }
     footer {
@@ -470,120 +470,6 @@
         responseDiv.innerHTML = "❌ Échec de la requête : " + error.message;
       }
     }
-    // ANIMATION AI MESH OPTIMISÉE DESKTOP + MOBILE
-    document.addEventListener('DOMContentLoaded', function() {
-      const canvas = document.createElement('canvas');
-      canvas.className = 'mesh-canvas';
-      document.body.querySelector('.gradient-background').appendChild(canvas);
-
-      const ctx = canvas.getContext('2d');
-      let dpr = window.devicePixelRatio || 1;
-      let W = window.innerWidth, H = window.innerHeight;
-
-      // Détection mobile et iOS
-      const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || W < 700;
-
-      function safeResize() {
-        setTimeout(() => {
-          W = window.innerWidth;
-          H = window.innerHeight;
-          canvas.width = Math.round(W * dpr);
-          canvas.height = Math.round(H * dpr);
-          canvas.style.width = W + 'px';
-          canvas.style.height = H + 'px';
-        }, 10);
-      }
-      safeResize();
-      if (!isMobile) window.addEventListener('resize', safeResize);
-
-      // Paramètres mesh
-      const NODE_COLOR = "#16e0ae";
-      const LINK_COLOR = "#16e0ae88";
-      const NODE_COUNT = isMobile ? 16 : Math.max(28, Math.floor(W / 36));
-      const LINK_DIST = isMobile ? 110 : 190;
-      const NODE_SIZE = isMobile ? 1.7 : 2.2;
-      let nodes = [];
-      let t = 0;
-
-      function randomSpeed() {
-        return (Math.random() - 0.5) * (isMobile ? 0.04 : 0.07);
-      }
-
-      function createNodes() {
-        nodes = [];
-        for (let i = 0; i < NODE_COUNT; i++) {
-          nodes.push({
-            x: Math.random() * W,
-            y: Math.random() * H,
-            dx: randomSpeed(),
-            dy: randomSpeed()
-          });
-        }
-      }
-      createNodes();
-
-      if (!isMobile) {
-        window.addEventListener('resize', () => {
-          safeResize();
-          setTimeout(createNodes, 400);
-        });
-      }
-
-      function distance(a, b) {
-        return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
-      }
-
-      function animate() {
-        ctx.clearRect(0, 0, W * dpr, H * dpr);
-
-        // Draw links
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            let a = nodes[i], b = nodes[j];
-            let dist = distance(a, b);
-            if (dist < LINK_DIST) {
-              ctx.save();
-              ctx.globalAlpha = isMobile ? 0.18 : 0.14 + 0.14 * Math.cos((t / 160) + (i + j) / 9);
-              ctx.strokeStyle = LINK_COLOR;
-              ctx.lineWidth = isMobile ? 0.85 : 1.1;
-              ctx.beginPath();
-              ctx.moveTo(a.x * dpr, a.y * dpr);
-              ctx.lineTo(b.x * dpr, b.y * dpr);
-              ctx.shadowColor = "#16e0ae18";
-              ctx.shadowBlur = isMobile ? 1 : 4 * dpr;
-              ctx.stroke();
-              ctx.restore();
-            }
-          }
-        }
-
-        // Draw nodes
-        for (const node of nodes) {
-          let pulse = 0.92 + Math.sin(t / 120 + node.x / 400 + node.y / 290) * 0.22;
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(node.x * dpr, node.y * dpr, NODE_SIZE * pulse * dpr, 0, 2 * Math.PI);
-          ctx.fillStyle = NODE_COLOR;
-          ctx.globalAlpha = isMobile ? 0.22 + 0.18 * pulse : 0.36 + 0.22 * pulse;
-          ctx.shadowColor = NODE_COLOR;
-          ctx.shadowBlur = isMobile ? 3 : 8 * dpr * pulse;
-          ctx.fill();
-          ctx.restore();
-
-          // Move
-          node.x += node.dx;
-          node.y += node.dy;
-          if (node.x < 0 || node.x > W) node.dx *= -1;
-          if (node.y < 0 || node.y > H) node.dy *= -1;
-          node.x += Math.sin(t / 240 + node.x / 400) * (isMobile ? 0.04 : 0.09);
-          node.y += Math.cos(t / 210 + node.y / 230) * (isMobile ? 0.04 : 0.09);
-        }
-
-        t += 0.45;
-        requestAnimationFrame(animate);
-      }
-      animate();
-    });
   </script>
 </head>
 <body>
@@ -623,5 +509,132 @@
     <div id="response"></div>
     <footer>© 2025 OktoAI. Tous droits réservés.</footer>
   </div>
+
+  <!-- SCRIPT AI MESH FINAL STABLE -->
+  <script>
+  (function(){
+    // Lance seulement quand le DOM, le body et .gradient-background sont présents
+    function ready(fn) {
+      if (
+        document.readyState !== 'loading' &&
+        document.body &&
+        document.body.querySelector('.gradient-background')
+      ) {
+        fn();
+      } else {
+        setTimeout(()=>ready(fn), 30);
+      }
+    }
+
+    ready(function(){
+      if (document.querySelector('.mesh-canvas')) return; // Évite le double ajout
+      const bg = document.body.querySelector('.gradient-background');
+      const canvas = document.createElement('canvas');
+      canvas.className = 'mesh-canvas';
+      bg.appendChild(canvas);
+
+      const ctx = canvas.getContext('2d');
+      let dpr = window.devicePixelRatio || 1;
+      let W = window.innerWidth, H = window.innerHeight;
+      const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || W < 700;
+
+      function safeResize() {
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+      }
+      safeResize();
+      if (!isMobile) window.addEventListener('resize', safeResize);
+
+      const NODE_COLOR = "#16e0ae";
+      const LINK_COLOR = "#16e0ae88";
+      const NODE_COUNT = isMobile ? 16 : Math.max(28, Math.floor(W / 36));
+      const LINK_DIST = isMobile ? 110 : 190;
+      const NODE_SIZE = isMobile ? 1.7 : 2.2;
+      let nodes = [];
+      let t = 0;
+
+      function randomSpeed() {
+        return (Math.random() - 0.5) * (isMobile ? 0.04 : 0.07);
+      }
+      function createNodes() {
+        nodes = [];
+        for (let i = 0; i < NODE_COUNT; i++) {
+          nodes.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            dx: randomSpeed(),
+            dy: randomSpeed()
+          });
+        }
+      }
+      createNodes();
+
+      if (!isMobile) {
+        window.addEventListener('resize', () => {
+          safeResize();
+          setTimeout(createNodes, 400);
+        });
+      }
+
+      function distance(a, b) {
+        return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, W * dpr, H * dpr);
+
+        // Lignes réseau
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            let a = nodes[i], b = nodes[j];
+            let dist = distance(a, b);
+            if (dist < LINK_DIST) {
+              ctx.save();
+              ctx.globalAlpha = isMobile ? 0.18 : 0.14 + 0.14 * Math.cos((t / 160) + (i + j) / 9);
+              ctx.strokeStyle = LINK_COLOR;
+              ctx.lineWidth = isMobile ? 0.85 : 1.1;
+              ctx.beginPath();
+              ctx.moveTo(a.x * dpr, a.y * dpr);
+              ctx.lineTo(b.x * dpr, b.y * dpr);
+              ctx.shadowColor = "#16e0ae18";
+              ctx.shadowBlur = isMobile ? 1 : 4 * dpr;
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+        }
+
+        // Points réseau
+        for (const node of nodes) {
+          let pulse = 0.92 + Math.sin(t / 120 + node.x / 400 + node.y / 290) * 0.22;
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(node.x * dpr, node.y * dpr, NODE_SIZE * pulse * dpr, 0, 2 * Math.PI);
+          ctx.fillStyle = NODE_COLOR;
+          ctx.globalAlpha = isMobile ? 0.22 + 0.18 * pulse : 0.36 + 0.22 * pulse;
+          ctx.shadowColor = NODE_COLOR;
+          ctx.shadowBlur = isMobile ? 3 : 8 * dpr * pulse;
+          ctx.fill();
+          ctx.restore();
+
+          node.x += node.dx;
+          node.y += node.dy;
+          if (node.x < 0 || node.x > W) node.dx *= -1;
+          if (node.y < 0 || node.y > H) node.dy *= -1;
+          node.x += Math.sin(t / 240 + node.x / 400) * (isMobile ? 0.04 : 0.09);
+          node.y += Math.cos(t / 210 + node.y / 230) * (isMobile ? 0.04 : 0.09);
+        }
+
+        t += 0.45;
+        requestAnimationFrame(animate);
+      }
+      animate();
+    });
+  })();
+  </script>
 </body>
 </html>
