@@ -89,12 +89,19 @@
       gap: 0.5rem;
     }
     .search-box input, .search-box select {
-      background: transparent;
+      background-color: #2a2a2a;
       border: none;
       outline: none;
       color: #fff;
       font-size: 1rem;
       flex: 1;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+    .search-box select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
     }
     .search-box button {
       background-color: #10a37f;
@@ -142,8 +149,8 @@
 <body>
   <div class="ai-background"></div>
   <div class="glow"></div>
-  <h1>Bienvenue chez OktoAI</h1>
-  <p>Nous combinons l'automatisation intelligente avec l'efficacité humaine pour livrer des solutions TI qui propulsent votre entreprise.</p>
+  <h1>OktoAI</h1>
+  <p>L’humain propulsé par l’intelligence.</p>
 
   <div class="search-box">
     <input type="text" id="search-input" placeholder="Posez votre question..." />
