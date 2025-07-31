@@ -18,6 +18,11 @@
       0%, 100% { opacity: 0.4; }
       50% { opacity: 0.8; }
     }
+    @keyframes moveGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -60,6 +65,7 @@
       animation: fadeInUp 1s ease forwards;
       width: 100%;
       max-width: 500px;
+      z-index: 2;
     }
     .search-box input {
       background: transparent;
@@ -92,17 +98,30 @@
       filter: blur(100px);
       animation: pulse 4s infinite;
     }
+    .ai-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(270deg, rgba(16,163,127,0.05), rgba(0,255,200,0.03), rgba(0,0,0,0.05));
+      background-size: 400% 400%;
+      animation: moveGradient 20s ease infinite;
+      z-index: -1;
+    }
     footer {
       margin-top: 3rem;
       font-size: 0.875rem;
       color: #888;
       animation: fadeInUp 2s ease forwards;
+      z-index: 2;
     }
   </style>
 </head>
 <body>
+  <div class="ai-background"></div>
   <div class="glow"></div>
-  <h1>OktoAI</h1>
+  <h1>Bienvenue chez OktoAI</h1>
   <p>Nous combinons l'automatisation intelligente avec l'efficacité humaine pour livrer des solutions TI qui propulsent votre entreprise.</p>
 
   <div class="search-box">
