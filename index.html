@@ -43,7 +43,7 @@
         });
         const data = await res.json();
         if (data.result) {
-          responseDiv.innerHTML = data.result;
+          responseDiv.innerHTML = `<div class='bubble'>${data.result}</div>`;
         } else {
           responseDiv.innerHTML = "❌ Erreur: " + JSON.stringify(data);
         }
@@ -169,17 +169,20 @@
     }
     #response {
       margin-top: 20px;
-      background: #1c1f24;
-      padding: 20px;
-      border-radius: 10px;
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
       text-align: left;
-      white-space: pre-wrap;
       font-size: 1rem;
       line-height: 1.5;
       animation: fadeInUp 1.2s ease forwards;
+      z-index: 2;
+    }
+    .bubble {
+      background: #1c1f24;
+      padding: 20px;
+      border-radius: 10px;
+      white-space: pre-wrap;
     }
     .loader {
       display: inline-block;
