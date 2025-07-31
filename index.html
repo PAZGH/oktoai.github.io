@@ -5,26 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OktoAI | Intelligence augmentée</title>
   <script>
-    // Redirige uniquement si on est sur www.oktoai.ca
     if (window.location.hostname === "www.oktoai.ca") {
       window.location.href = "https://oktoai.ca";
     }
   </script>
   <style>
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
     }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(160deg, #0f0f0f 0%, #1e1e1e 100%);
+      background: radial-gradient(ellipse at top left, #121212 0%, #0f0f0f 100%);
       color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -34,11 +31,15 @@
       text-align: center;
       padding: 2rem;
       overflow-x: hidden;
+      position: relative;
     }
     h1 {
       font-size: 3rem;
       margin-bottom: 1rem;
       animation: fadeInUp 0.6s ease forwards;
+      background: linear-gradient(90deg, #10a37f, #00ffcc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     p {
       font-size: 1.25rem;
@@ -56,16 +57,34 @@
       font-weight: bold;
       transition: background-color 0.3s ease, transform 0.3s ease;
       animation: fadeInUp 1s ease forwards;
+      box-shadow: 0 0 10px #10a37f88;
     }
     a.button:hover {
       background-color: #0e8e6b;
       transform: scale(1.05);
+      box-shadow: 0 0 15px #10a37fcc;
     }
-    footer {
-      margin-top: 3rem;
-      font-size: 0.875rem;
-      color: #888;
-      animation: fadeInUp 1.2s ease forwards;
+    .card {
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      padding: 2rem;
+      margin-top: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0,255,200,0.05);
+      animation: fadeInUp 1.5s ease forwards;
+    }
+    .card h2 {
+      font-size: 1.5rem;
+      color: #10a37f;
+      margin-bottom: 1rem;
+    }
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .card li {
+      margin-bottom: 0.5rem;
+      color: #ccc;
     }
     .glow {
       position: absolute;
@@ -77,9 +96,11 @@
       filter: blur(100px);
       animation: pulse 4s infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 0.8; }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.875rem;
+      color: #888;
+      animation: fadeInUp 2s ease forwards;
     }
   </style>
 </head>
@@ -88,6 +109,17 @@
   <h1>Bienvenue chez OktoAI</h1>
   <p>Nous combinons l'automatisation intelligente avec l'efficacité humaine pour livrer des solutions TI qui propulsent votre entreprise.</p>
   <a class="button" href="#">Contactez-nous</a>
+
+  <div class="card">
+    <h2>Nos services</h2>
+    <ul>
+      <li>🔐 Sécurité & Microsoft Defender</li>
+      <li>☁️ Migration infonuagique (Azure/M365)</li>
+      <li>🤖 Automatisation PowerShell / NinjaOne</li>
+      <li>📊 Gouvernance TI & tableaux de bord</li>
+    </ul>
+  </div>
+
   <footer>© 2025 OktoAI. Tous droits réservés.</footer>
 </body>
 </html>
