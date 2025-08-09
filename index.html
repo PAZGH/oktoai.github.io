@@ -38,8 +38,9 @@
     .chip.active{background:rgba(16,163,127,0.35);color:#fff;border-color:rgba(16,163,127,0.35)}
 
     .features{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px}
-    .feat{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:999px;padding:10px 14px;background:color-mix(in oklab,var(--pill) 85%, transparent);color:var(--fg);cursor:pointer}
+    .feat{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:999px;padding:10px 14px;background:color-mix(in oklab,var(--pill) 85%, transparent);color:var(--fg);cursor:pointer}
     .feat.active{background:rgba(16,163,127,0.35);color:#fff;border-color:rgba(16,163,127,0.35)}
+    .feat img{width:18px;height:18px;display:block;border-radius:3px}
 
     .legal{position:fixed;inset:auto 0 0 0;text-align:center;padding:12px;color:color-mix(in oklab, var(--muted) 88%, transparent);backdrop-filter:saturate(1.1) blur(6px);font-size:14px}
 
@@ -63,9 +64,15 @@
       <div class="features" aria-hidden="false">
         <span class="feat">✍️ Help me write</span>
         <span class="feat">📄 Summarize text</span>
-        <span class="feat">💻 Code</span>
-        <span class="feat" id="youChip">💡 You.com</span>
-        <span class="feat" id="perplexityChip">🤖 Perplexity AI</span>
+        <span class="feat" id="deepaiChip">🧠 DeepAI Chat</span>
+        <span class="feat" id="youChip">
+          <img src="https://upload.wikimedia.org/wikipedia/en/8/8f/Youcom_new_logo.jpg" alt="You.com logo">
+          You.com
+        </span>
+        <span class="feat" id="perplexityChip">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#000"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#10a37f"/></svg>
+          Perplexity AI
+        </span>
       </div>
     </div>
   </main>
@@ -77,6 +84,7 @@
     const googleChip = document.getElementById('googleChip');
     const perplexityChip = document.getElementById('perplexityChip');
     const youChip = document.getElementById('youChip');
+    const deepaiChip = document.getElementById('deepaiChip');
     let selectedEngine = 'google';
 
     function setActive(engine) {
@@ -84,11 +92,13 @@
       googleChip.classList.toggle('active', engine === 'google');
       perplexityChip.classList.toggle('active', engine === 'perplexity');
       youChip.classList.toggle('active', engine === 'you');
+      deepaiChip.classList.toggle('active', engine === 'deepai');
     }
 
     googleChip.addEventListener('click', () => setActive('google'));
     perplexityChip.addEventListener('click', () => setActive('perplexity'));
     youChip.addEventListener('click', () => setActive('you'));
+    deepaiChip.addEventListener('click', () => setActive('deepai'));
 
     document.getElementById('askForm').addEventListener('submit', e => {
       e.preventDefault();
@@ -99,6 +109,8 @@
         window.open('https://www.perplexity.ai/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
       } else if (selectedEngine === 'you') {
         window.open('https://you.com/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
+      } else if (selectedEngine === 'deepai') {
+        window.open('https://deepai.org/chat?query=' + encodeURIComponent(q.value), '_blank', 'noopener');
       }
     });
   </script>
