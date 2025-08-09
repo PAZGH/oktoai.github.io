@@ -3,372 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OktoAI | Intelligence augmentée</title>
-  <meta name="description" content="OktoAI — L’humain propulsé par l’intelligence. Moteur de recherche et assistant IA." />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="color-scheme" content="dark" />
+  <title>OktoAI‑5 • Accueil</title>
+  <meta name="description" content="OktoAI‑5 — L’humain propulsé par l’intelligence. Interface d’accueil type ChatGPT‑5." />
+  <meta name="color-scheme" content="dark light" />
   <style>
     :root{
-      --bg:#181b22; --fg:#f4f4f6; --muted:#bababa; --accent:#10a37f;
+      --bg:#0b0f14; --fg:#e8eaed; --muted:#b6bbc4; --accent:#10a37f; --pill:#1e232a; --pill-2:#151a20; --border:#2a3139;
+      --btn:#ffffff; --btn-text:#0e1116; --shadow:0 20px 80px rgba(0,0,0,.45);
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f7f7f9; --fg:#0e1116; --muted:#3b4450; --pill:#ffffff; --pill-2:#f3f5f7; --border:#e7e9ee; --btn:#0e1116; --btn-text:#ffffff; }
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
-      background:var(--bg); color:var(--fg); overflow-x:hidden; position:relative; z-index:0;
-    }
-    .gradient-background{position:fixed; inset:0; width:100vw; height:100vh; z-index:0; overflow:hidden; pointer-events:none}
-    .gradient-sphere{position:absolute; border-radius:50%; filter:blur(70px) brightness(1.03); opacity:.34; animation:moveSphere 38s ease-in-out infinite alternate; pointer-events:none; will-change:transform; mix-blend-mode:lighten}
-    .sphere-1{width:550px;height:550px;left:-190px;top:-120px;background:radial-gradient(circle at 35% 25%, #13e8b1 0%, #005555 92%, #0000 100%);animation-delay:0s}
-    .sphere-2{width:410px;height:410px;right:-110px;top:50px;background:radial-gradient(circle at 68% 24%, #0e8187 0%, #0c3538 90%, #0000 100%);animation-delay:4s}
-    .sphere-3{width:390px;height:390px;left:20vw;bottom:-160px;background:radial-gradient(circle at 40% 80%, #27ffae 0%, #007b71 92%, #0000 100%);opacity:.26;animation-delay:8s}
-    @keyframes moveSphere{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-40px) scale(1.13)}}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--fg)}
 
-    .glow{position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);width:820px;height:400px;background:radial-gradient(circle at 50% 60%, #10a37f18 15%, #0000 85%);filter:blur(80px);opacity:.25;pointer-events:none;z-index:1}
-    .grid-overlay{position:absolute;inset:0;z-index:2;background:repeating-linear-gradient(90deg, #1afab222 0 1px, transparent 1px 40px),repeating-linear-gradient(180deg, #1afab210 0 1px, transparent 1px 40px);opacity:.04;pointer-events:none;mix-blend-mode:lighten}
-    .noise-overlay{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.12;background:radial-gradient(#ffffff06 1px,#0000 1px);background-size:3px 3px;mix-blend-mode:lighten}
+    .bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+    .bg:before{content:"";position:absolute;inset:-20%;filter:blur(80px);background:
+      radial-gradient(40% 35% at 30% 20%, rgba(255,99,71,.18), transparent 60%),
+      radial-gradient(38% 34% at 70% 25%, rgba(16,163,127,.22), transparent 60%),
+      radial-gradient(50% 45% at 50% 90%, rgba(99,102,241,.18), transparent 70%);
+      transform:translateZ(0)}
+    .bg:after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 50% -10%, rgba(255,255,255,.15), transparent 60%), radial-gradient(80% 60% at 50% 130%, rgba(0,0,0,.45), transparent 60%)}
 
-    .mesh-canvas{position:absolute;inset:0;width:100vw;height:100vh;z-index:10;pointer-events:none;display:block}
+    .hero{position:relative;z-index:1;min-height:100dvh;display:grid;place-items:center;padding:84px 18px 140px}
+    .stack{max-width:1100px;width:100%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px}
+    .h1{font-size:clamp(28px, 5vw, 56px);line-height:1.05;font-weight:800;letter-spacing:.2px;text-wrap:balance}
+    .sub{font-size:clamp(16px, 2.4vw, 22px);color:var(--muted);max-width:900px}
 
-    .content-container{position:relative;z-index:100;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-    .oktoai-anim{display:flex;align-items:center;justify-content:center;position:relative;margin-top:7vh;margin-bottom:.3rem;user-select:none}
-    .oktoai-flare{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:260px;height:70px;border-radius:60% 80%;background:radial-gradient(ellipse 100% 65% at 53% 60%, #10a37f11 30%, #181b2300 100%);filter:blur(8px);opacity:.17;z-index:-1;animation:haloAnim 5.2s cubic-bezier(.6,.13,.65,.94) infinite alternate}
-    @keyframes haloAnim{0%{opacity:.11;transform:translate(-50%,-50%) scale(.99)}50%{opacity:.17;transform:translate(-50%,-50%) scale(1.09)}100%{opacity:.11;transform:translate(-50%,-50%) scale(.99)}}
+    .ask{margin-top:8px;background:linear-gradient(180deg, color-mix(in oklab,var(--pill) 90%, transparent), color-mix(in oklab,var(--pill-2) 90%, transparent));
+         border:1px solid var(--border);box-shadow:var(--shadow);border-radius:22px;display:flex;align-items:center;gap:12px;padding:18px;max-width:920px;width:100%}
+    .ask input{flex:1;min-width:0;background:transparent;border:none;color:var(--fg);font-size:18px;outline:none}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:color-mix(in oklab,var(--pill) 80%, transparent);color:var(--fg)}
 
-    .oktoai-pulse{font-size:2.7rem;font-weight:700;letter-spacing:-.5px;background:linear-gradient(95deg,#8fc9b0 0%,var(--accent) 65%,#1e2226 100%);background-size:190% 100%;
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:oktoBreathe 3.8s cubic-bezier(.52,.1,.56,.98) infinite;z-index:4;position:relative;padding-right:.22em;transition:filter .21s;filter:drop-shadow(0 0 6px #10a37f0d)}
-    @keyframes oktoBreathe{0%,100%{letter-spacing:-.5px;filter:blur(.1px)}30%{letter-spacing:.03em;filter:blur(.5px)}60%{letter-spacing:-.5px;filter:blur(.07px)}}
+    .features{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+    .feat{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:999px;padding:10px 14px;background:color-mix(in oklab,var(--pill) 85%, transparent);color:var(--fg)}
 
-    .oktoai-scan{position:absolute;left:7%;right:7%;top:0;bottom:0;pointer-events:none;border-radius:1em;border-top:1.2px dashed #10a37f31;border-bottom:1.2px dashed #10a37f31;opacity:.11;animation:scanAnim 2.6s linear infinite}
-    @keyframes scanAnim{0%{top:90%;opacity:.08}20%{top:30%;opacity:.15}40%{top:10%;opacity:.19}70%{top:30%;opacity:.12}100%{top:90%;opacity:.09}}
+    .legal{position:fixed;inset:auto 0 0 0;text-align:center;padding:12px;color:color-mix(in oklab, var(--muted) 88%, transparent);backdrop-filter:saturate(1.1) blur(6px);font-size:14px}
 
-    .oktoai-dot{width:11px;height:11px;margin-left:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 7px 0 #10a37f33;animation:dotPulse 1.7s infinite;display:inline-block}
-    @keyframes dotPulse{0%,100%{transform:scale(1);opacity:.8}60%{transform:scale(1.22);opacity:1}}
-
-    .subtitle{font-size:1.12rem;color:var(--muted);max-width:480px;margin:0 0 3.3rem;animation:fadeInUp .7s .13s both;z-index:4;position:relative;text-align:center;opacity:.93}
-
-    .search-wrap{width:100%;display:flex;justify-content:center}
-    .search-box{display:flex;align-items:center;width:100%;max-width:840px;min-width:280px;margin:2rem auto 0;background:rgba(28,30,34,.97);border-radius:.9rem;box-shadow:0 1px 16px 0 #181b2312;border:1px solid rgba(44,255,190,.06);backdrop-filter:blur(8px) brightness(1.01);padding:.30rem .33rem;gap:.2rem;z-index:4;transition:box-shadow .18s,border .16s;animation:fadeInUp .8s .18s both;position:relative;overflow:visible;min-height:54px}
-    .search-box:focus-within::before,.search-box:hover::before{opacity:1;transform:scale(1.025)}
-    .search-box::before{content:'';position:absolute;inset:-5px;border-radius:.99rem;pointer-events:none;opacity:0;z-index:1;background:radial-gradient(ellipse 85% 60% at 55% 70%, #10a37f0a 30%, #1c232800 100%);box-shadow:0 0 14px 0 #10a37f0a;transition:opacity .26s,transform .28s;animation:pulseHalo 4s infinite cubic-bezier(.61,.2,.39,.97)}
-    @keyframes pulseHalo{0%{opacity:.04}50%{opacity:.10}100%{opacity:.05}}
-
-    .ai-icon{position:absolute;left:25px;top:51%;transform:translateY(-50%);width:22px;height:22px;z-index:3;pointer-events:none;opacity:.82;filter:drop-shadow(0 0 2px #10a37f18);animation:aiRotate 3.2s linear infinite;transition:opacity .18s}
-    @keyframes aiRotate{0%{transform:translateY(-50%) rotate(0)}100%{transform:translateY(-50%) rotate(360deg)}}
-
-    .search-input{font-size:1.08rem;font-family:inherit;background:#23282b;border:none;color:#e7eaea;outline:none;padding:.61rem 1.2rem .61rem 2.7rem;border-radius:.6rem;margin-right:.12rem;transition:box-shadow .12s,transform .12s;box-shadow:0 1px 7px 0 #181b2309 inset;position:relative;z-index:2;width:100%;min-width:0;flex:4 4 340px}
-    .engine-select{background:rgba(22,27,30,.7);color:var(--accent);font-weight:700;border:1.2px solid #1a3730;border-radius:.6rem;font-size:1.06rem;padding:.45rem 1.9rem .45rem 1.05rem;margin-right:.12rem;outline:none;box-shadow:0 1px 5px #10a37f07 inset;min-width:120px;cursor:pointer;appearance:none;transition:border .13s,background .14s,box-shadow .14s;backdrop-filter:blur(2px) brightness(1.04);background-image:url("data:image/svg+xml;utf8,<svg fill='rgba(16,163,127,0.6)' height='14' width='14' viewBox='0 0 20 20'><polygon points='5,7 10,13 15,7'/></svg>");background-repeat:no-repeat;background-position:right .7em center;background-size:1.2em}
-    .engine-select:focus,.engine-select:hover{border:1.3px solid #10a37f55;background:rgba(22,27,30,.93);box-shadow:0 0 12px 1px #10a37f11;color:#18ddb0}
-    .engine-select option{background:rgba(34,40,44,.98);color:#e2fff7}
-
-    .send-btn{background:var(--accent);border:none;color:var(--fg);font-size:1.09rem;font-weight:700;padding:.52rem 2.3rem;border-radius:.7rem;cursor:pointer;transition:background .13s,color .11s,box-shadow .1s,transform .09s;box-shadow:0 1px 6px #10a37f12;outline:none;position:relative;z-index:1;overflow:hidden;letter-spacing:.03em;min-width:120px;min-height:42px;display:flex;align-items:center;justify-content:center;white-space:nowrap}
-    .send-btn:hover,.send-btn:focus{background:#0b664d;color:#fff;box-shadow:0 0 11px 0 #10a37f14;transform:scale(1.012)}
-    .send-btn:active{transform:scale(.97)}
-    .ripple-effect{position:absolute;width:70px;height:70px;background:radial-gradient(circle, #10a37f33 0, #23282b00 100%);border-radius:100%;transform:translate(-50%,-50%) scale(0);pointer-events:none;left:50%;top:50%;animation:ripple-btn .6s cubic-bezier(.24,.6,.32,1.21);z-index:10}
-    @keyframes ripple-btn{0%{transform:translate(-50%,-50%) scale(0);opacity:.14}70%{opacity:.04}100%{transform:translate(-50%,-50%) scale(1.07);opacity:0}}
-
-    #response{margin-top:2.1rem;max-width:720px;margin-left:auto;margin-right:auto;text-align:left;font-size:1.04rem;line-height:1.53;z-index:6;animation:fadeInUp .9s .4s both;position:relative}
-    .bubble{background:#1c1f23f1;border:1px solid #10a37f0b;border-radius:11px;padding:13px 20px;box-shadow:0 2px 7px #10a37f10;white-space:pre-wrap;filter:drop-shadow(0 2px 8px #181b230d);position:relative}
-    .animated-pop{animation:pop .22s ease-out}
-    @keyframes pop{from{transform:scale(.98);opacity:.8}to{transform:scale(1);opacity:1}}
-    .loader{display:inline-block;width:22px;height:22px;border:3px solid var(--accent);border-top:3px solid #1e1e1e;border-radius:50%;animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes fadeInUp{0%{opacity:0;transform:translateY(15px)}100%{opacity:1;transform:translateY(0)}}
-    footer{margin:3.2rem 0 1.5rem;font-size:.95rem;color:#bdbdbd;letter-spacing:.01em;text-align:center;opacity:.35;animation:fadeInUp 2.3s .7s both;z-index:2}
-
-    /* Pause globale des animations après activation de .pause-anim */
-    .pause-anim .gradient-sphere,
-    .pause-anim .oktoai-flare,
-    .pause-anim .oktoai-pulse,
-    .pause-anim .oktoai-scan,
-    .pause-anim .oktoai-dot,
-    .pause-anim .search-box::before,
-    .pause-anim .ai-icon{ animation: none !important; }
-
-    @media (max-width:1200px){.search-box{max-width:99vw}}
-    @media (max-width:700px){
-      .gradient-sphere{filter:blur(38px) brightness(1.09)}
-      .oktoai-pulse{font-size:1.6rem}
-      .search-box{max-width:97vw;min-width:0}
-      .bubble{padding:9px 12px}
-      .oktoai-flare{width:108px;height:22px}
-      #response{max-width:95vw}
-    }
-    @media (prefers-reduced-motion: reduce){
-      *,*:before,*:after{animation:none!important;transition:none!important}
-    }
+    .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   </style>
-  <!-- ⚠️ Retrait du redirect client pour éviter les boucles. Gérer la redirection au niveau DNS/serveur. -->
 </head>
 <body>
-  <div class="gradient-background" aria-hidden="true">
-    <div class="gradient-sphere sphere-1"></div>
-    <div class="gradient-sphere sphere-2"></div>
-    <div class="gradient-sphere sphere-3"></div>
-    <div class="glow"></div>
-    <div class="grid-overlay"></div>
-    <div class="noise-overlay"></div>
-  </div>
+  <div class="bg" aria-hidden="true"></div>
 
-  <main class="content-container" role="main">
-    <h1 class="oktoai-anim" aria-label="OktoAI">
-      <span class="oktoai-pulse">OktoAI<span class="oktoai-scan" aria-hidden="true"></span></span>
-      <span class="oktoai-dot" aria-hidden="true"></span>
-      <span class="oktoai-flare" aria-hidden="true"></span>
-    </h1>
-    <p class="subtitle">L’humain propulsé par l’intelligence.</p>
+  <main class="hero" role="main">
+    <div class="stack">
+      <h1 class="h1">OktoAI‑5</h1>
+      <p class="sub">OktoAI‑5 offre le modèle le plus rapide et le plus utile, avec raisonnement intégré.</p>
 
-    <section class="search-wrap" aria-label="Recherche">
-      <form class="search-box" id="search-form" role="search" aria-label="Moteur de recherche OktoAI">
-        <svg class="ai-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
-          <circle cx="16" cy="16" r="13" stroke="#10a37f" stroke-width="2" fill="#23282b" />
-          <path d="M12.8 16a3.2 3.2 0 116.4 0 3.2 3.2 0 01-6.4 0z" stroke="#10a37f" stroke-width="1.7" fill="none"/>
-          <circle cx="16" cy="16" r="1.3" fill="#10a37f" />
-          <path d="M16 6v2M16 24v2M6 16h2M24 16h2M9.64 9.64l1.4 1.4M20.96 20.96l1.4 1.4M20.96 11.04l1.4-1.4M9.64 22.36l-1.4 1.4" stroke="#10a37f99" stroke-width="1"/>
-        </svg>
-        <label class="visually-hidden" for="search-input">Question</label>
-        <input class="search-input" id="search-input" name="q" type="text" placeholder="Posez votre question..." autocomplete="off" spellcheck="false" aria-label="Question" />
-        <label class="visually-hidden" for="engine-select">Moteur</label>
-        <select class="engine-select" id="engine-select" name="engine" aria-label="Choisir le moteur">
-          <option value="google">Google</option>
-          <option value="perplexity">Perplexity AI</option>
-          <option value="you">You.com</option>
-          <option value="oktoai" selected>OktoAI</option>
-        </select>
-        <button class="send-btn" type="submit" id="send-btn">Envoyer</button>
+      <form class="ask" id="askForm" role="search" aria-label="Zone de saisie principale">
+        <label class="sr-only" for="q">Posez une question</label>
+        <input id="q" placeholder="Posez n'importe quoi" autocomplete="off" />
+        <button class="chip" type="button" id="searchBtn">🌐 Search</button>
       </form>
-    </section>
 
-    <section id="response" aria-live="polite" aria-atomic="true"></section>
-
-    <footer>© 2025 OktoAI. Tous droits réservés.</footer>
+      <div class="features" aria-hidden="false">
+        <span class="feat" id="perplexityBtn">🤖 Perplexity AI</span>
+        <span class="feat">✍️ Help me write</span>
+        <span class="feat">📄 Summarize text</span>
+        <span class="feat">💻 Code</span>
+        <span class="feat">💡 Brainstorm</span>
+      </div>
+    </div>
   </main>
 
-  <!-- SCRIPT: accessibilité + UI + arrêt animations -->
-  <script>
-  // Styles "screen reader only"
-  (function(){
-    const srOnly = document.createElement('style');
-    srOnly.textContent = '.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}';
-    document.head.appendChild(srOnly);
-  })();
-
-  // UI + recherche
-  (function(){
-    const form = document.getElementById('search-form');
-    const input = document.getElementById('search-input');
-    const engine = document.getElementById('engine-select');
-    const responseDiv = document.getElementById('response');
-    const btn = document.getElementById('send-btn');
-
-    function openSafe(url){
-      const w = window.open(url, '_blank', 'noopener,noreferrer');
-      if (w) { try { w.opener = null; } catch(_){} }
-    }
-
-    function ripple(){
-      const r = document.createElement('span');
-      r.className = 'ripple-effect';
-      btn.appendChild(r);
-      setTimeout(()=>{ try{ r.remove(); }catch(_){}} , 650);
-    }
-
-    async function askAI(prompt){
-      responseDiv.innerHTML = '<span class="loader" aria-label="Chargement"></span>';
-
-      // Timeout 15s + abort
-      const controller = new AbortController();
-      const timeout = setTimeout(()=>controller.abort(), 15000);
-
-      try{
-        const res = await fetch("https://8590c13a-96d1-4f5c-b2fa-3877dde62c30-00-3mfhc1zfhiy3e.worf.replit.dev/ask", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({ prompt }),
-          signal:controller.signal,
-          referrerPolicy:"no-referrer",
-          cache:"no-store"
-        });
-        clearTimeout(timeout);
-
-        // Force lecture JSON sécurisée
-        let data = null;
-        try { data = await res.json(); } catch { data = { result:null, error:"Réponse invalide" }; }
-
-        if (res.ok && data && data.result){
-          responseDiv.innerHTML = `<div class="bubble animated-pop">${data.result}</div>`;
-        } else {
-          const msg = (data && data.error) ? data.error : `Erreur ${res.status}`;
-          responseDiv.textContent = "Erreur: " + msg;
-        }
-      } catch(err){
-        responseDiv.textContent = "Échec de la requête: " + (err && err.message ? err.message : err);
-      }
-    }
-
-    function handleSearch(q, eng){
-      if (!q || !q.trim()){
-        input.focus();
-        return;
-      }
-      switch(eng){
-        case 'google':
-          openSafe(`https://www.google.com/search?q=${encodeURIComponent(q)}`); break;
-        case 'perplexity':
-          openSafe(`https://www.perplexity.ai/search?q=${encodeURIComponent(q)}`); break;
-        case 'you':
-          openSafe(`https://you.com/search?q=${encodeURIComponent(q)}`); break;
-        case 'oktoai':
-        default:
-          askAI(q);
-      }
-    }
-
-    form.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      ripple();
-      handleSearch(input.value, engine.value);
-    });
-
-    input.addEventListener('keydown', (e)=>{
-      if (e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        form.requestSubmit();
-      }
-    });
-
-    // Arrêt des animations CSS après 8s pour éviter impression de "chargement infini"
-    setTimeout(()=>document.body.classList.add('pause-anim'), 8000);
-  })();
-  </script>
+  <footer class="legal">En envoyant un message, vous acceptez nos Conditions et notre Politique de confidentialité. Cookies: préférences.</footer>
 
   <script>
-  // Mesh animé – mobile safe + arrêt après 12s (évite "loop loading")
-  (function(){
-    function ready(fn){
-      if (document.readyState !== 'loading' && document.body && document.body.querySelector('.gradient-background')) {
-        fn();
+    const q = document.getElementById('q');
+    document.getElementById('searchBtn').addEventListener('click', ()=> {
+      if(q.value.trim()){
+        window.open('https://www.google.com/search?q='+encodeURIComponent(q.value),'_blank','noopener');
       } else {
-        setTimeout(()=>ready(fn), 30);
+        q.focus();
       }
-    }
-
-    ready(function(){
-      if (document.querySelector('.mesh-canvas')) return;
-      const bg = document.body.querySelector('.gradient-background');
-      const canvas = document.createElement('canvas');
-      canvas.className = 'mesh-canvas';
-      bg.appendChild(canvas);
-
-      const ctx = canvas.getContext('2d');
-      let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1)); // cap DPR
-      let W = innerWidth, H = innerHeight;
-      const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || W < 700;
-
-      function safeResize(){
-        W = innerWidth; H = innerHeight;
-        canvas.width = Math.round(W * dpr);
-        canvas.height = Math.round(H * dpr);
-        canvas.style.width = W + 'px';
-        canvas.style.height = H + 'px';
-      }
-      safeResize();
-
-      const onResize = ()=>{ safeResize(); setTimeout(createNodes, 200); };
-      if (!isMobile){
-        window.addEventListener('resize', onResize, {passive:true});
-      } else {
-        window.addEventListener('orientationchange', ()=>setTimeout(onResize, 250), {passive:true});
-      }
-
-      const NODE_COLOR = "#16e0ae";
-      const LINK_COLOR = "#16e0ae88";
-      const NODE_COUNT = isMobile ? 16 : Math.max(28, Math.floor(W / 36));
-      const LINK_DIST = isMobile ? 110 : 190;
-      const NODE_SIZE = isMobile ? 1.7 : 2.2;
-
-      let nodes = [];
-      let t = 0;
-      let running = true;
-      let rafId = null;
-
-      function randomSpeed(){ return (Math.random() - 0.5) * (isMobile ? 0.04 : 0.07); }
-
-      function createNodes(){
-        nodes = [];
-        for (let i=0;i<NODE_COUNT;i++){
-          nodes.push({ x: Math.random()*W, y: Math.random()*H, dx: randomSpeed(), dy: randomSpeed() });
-        }
-      }
-      createNodes();
-
-      function distance(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy); }
-
-      function drawFrame(){
-        if (!running) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        for (let i=0;i<nodes.length;i++){
-          for (let j=i+1;j<nodes.length;j++){
-            const a=nodes[i], b=nodes[j];
-            const dist = distance(a,b);
-            if (dist < LINK_DIST){
-              ctx.save();
-              ctx.globalAlpha = isMobile ? .18 : .14 + .14*Math.cos((t/160)+(i+j)/9);
-              ctx.strokeStyle = LINK_COLOR;
-              ctx.lineWidth = isMobile ? .85 : 1.1;
-              ctx.beginPath();
-              ctx.moveTo(a.x*dpr, a.y*dpr);
-              ctx.lineTo(b.x*dpr, b.y*dpr);
-              ctx.shadowColor = "#16e0ae18";
-              ctx.shadowBlur = isMobile ? 1 : 4*dpr;
-              ctx.stroke();
-              ctx.restore();
-            }
-          }
-        }
-
-        for (const node of nodes){
-          const pulse = .92 + Math.sin(t/120 + node.x/400 + node.y/290)*.22;
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(node.x*dpr, node.y*dpr, NODE_SIZE*pulse*dpr, 0, Math.PI*2);
-          ctx.fillStyle = NODE_COLOR;
-          ctx.globalAlpha = isMobile ? .22 + .18*pulse : .36 + .22*pulse;
-          ctx.shadowColor = NODE_COLOR;
-          ctx.shadowBlur = isMobile ? 3 : 8*dpr*pulse;
-          ctx.fill();
-          ctx.restore();
-
-          node.x += node.dx; node.y += node.dy;
-          if (node.x < 0 || node.x > W) node.dx *= -1;
-          if (node.y < 0 || node.y > H) node.dy *= -1;
-          node.x += Math.sin(t/240 + node.x/400) * (isMobile ? .04 : .09);
-          node.y += Math.cos(t/210 + node.y/230) * (isMobile ? .04 : .09);
-        }
-
-        t += .45;
-        rafId = requestAnimationFrame(drawFrame);
-      }
-
-      // Arrêt automatique après 12s pour éviter toute impression de chargement en boucle
-      setTimeout(()=>{
-        running = false;
-        if (rafId) cancelAnimationFrame(rafId);
-      }, 12000);
-
-      // Stop si l’onglet est masqué
-      document.addEventListener('visibilitychange', ()=>{
-        if (document.hidden){
-          running = false;
-          if (rafId) cancelAnimationFrame(rafId);
-        }
-      });
-
-      drawFrame();
     });
-  })();
+    document.getElementById('perplexityBtn').addEventListener('click', ()=> {
+      if(q.value.trim()){
+        window.open('https://www.perplexity.ai/search?q='+encodeURIComponent(q.value),'_blank','noopener');
+      } else {
+        q.focus();
+      }
+    });
   </script>
 </body>
 </html>
-```
