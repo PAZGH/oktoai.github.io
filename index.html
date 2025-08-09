@@ -34,10 +34,12 @@
     .ask{margin-top:8px;background:linear-gradient(180deg, color-mix(in oklab,var(--pill) 90%, transparent), color-mix(in oklab,var(--pill-2) 90%, transparent));
          border:1px solid var(--border);box-shadow:var(--shadow);border-radius:22px;display:flex;align-items:center;gap:12px;padding:18px;max-width:920px;width:100%}
     .ask input{flex:1;min-width:0;background:transparent;border:none;color:var(--fg);font-size:18px;outline:none}
-    .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:color-mix(in oklab,var(--pill) 80%, transparent);color:var(--fg)}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:color-mix(in oklab,var(--pill) 80%, transparent);color:var(--fg);cursor:pointer;user-select:none;transition:background-color 0.2s ease, color 0.2s ease}
+    .chip.active{background:rgba(16,163,127,0.35);color:#fff;border-color:rgba(16,163,127,0.35)}
 
     .features{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px}
-    .feat{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:999px;padding:10px 14px;background:color-mix(in oklab,var(--pill) 85%, transparent);color:var(--fg)}
+    .feat{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:999px;padding:10px 14px;background:color-mix(in oklab,var(--pill) 85%, transparent);color:var(--fg);cursor:pointer}
+    .feat.active{background:rgba(16,163,127,0.35);color:#fff;border-color:rgba(16,163,127,0.35)}
 
     .legal{position:fixed;inset:auto 0 0 0;text-align:center;padding:12px;color:color-mix(in oklab, var(--muted) 88%, transparent);backdrop-filter:saturate(1.1) blur(6px);font-size:14px}
 
@@ -55,15 +57,15 @@
       <form class="ask" id="askForm" role="search" aria-label="Zone de saisie principale">
         <label class="sr-only" for="q">Posez une question</label>
         <input id="q" placeholder="Posez n'importe quoi" autocomplete="off" />
-        <button class="chip" type="button" id="searchBtn">🌐 Search</button>
+        <span class="chip active" id="googleChip">🌐 Search</span>
       </form>
 
       <div class="features" aria-hidden="false">
-        <span class="feat" id="perplexityBtn">🤖 Perplexity AI</span>
         <span class="feat">✍️ Help me write</span>
         <span class="feat">📄 Summarize text</span>
         <span class="feat">💻 Code</span>
-        <span class="feat">💡 Brainstorm</span>
+        <span class="feat" id="youChip">💡 You.com</span>
+        <span class="feat" id="perplexityChip">🤖 Perplexity AI</span>
       </div>
     </div>
   </main>
@@ -72,18 +74,31 @@
 
   <script>
     const q = document.getElementById('q');
-    document.getElementById('searchBtn').addEventListener('click', ()=> {
-      if(q.value.trim()){
-        window.open('https://www.google.com/search?q='+encodeURIComponent(q.value),'_blank','noopener');
-      } else {
-        q.focus();
-      }
-    });
-    document.getElementById('perplexityBtn').addEventListener('click', ()=> {
-      if(q.value.trim()){
-        window.open('https://www.perplexity.ai/search?q='+encodeURIComponent(q.value),'_blank','noopener');
-      } else {
-        q.focus();
+    const googleChip = document.getElementById('googleChip');
+    const perplexityChip = document.getElementById('perplexityChip');
+    const youChip = document.getElementById('youChip');
+    let selectedEngine = 'google';
+
+    function setActive(engine) {
+      selectedEngine = engine;
+      googleChip.classList.toggle('active', engine === 'google');
+      perplexityChip.classList.toggle('active', engine === 'perplexity');
+      youChip.classList.toggle('active', engine === 'you');
+    }
+
+    googleChip.addEventListener('click', () => setActive('google'));
+    perplexityChip.addEventListener('click', () => setActive('perplexity'));
+    youChip.addEventListener('click', () => setActive('you'));
+
+    document.getElementById('askForm').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!q.value.trim()) { q.focus(); return; }
+      if (selectedEngine === 'google') {
+        window.open('https://www.google.com/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
+      } else if (selectedEngine === 'perplexity') {
+        window.open('https://www.perplexity.ai/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
+      } else if (selectedEngine === 'you') {
+        window.open('https://you.com/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
       }
     });
   </script>
