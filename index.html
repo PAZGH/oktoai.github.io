@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OktoAI‑5 • Accueil</title>
-  <meta name="description" content="OktoAI‑5 — L’humain propulsé par l’intelligence. Interface d’accueil type ChatGPT‑5. Créateur : Paz" />
+  <title>OktoAI-5 • Accueil</title>
+  <meta name="description" content="OktoAI-5 — L’humain propulsé par l’intelligence. Interface d’accueil type ChatGPT-5. Créateur : Paz" />
   <meta name="color-scheme" content="dark light" />
   <style>
     :root{
@@ -45,6 +45,10 @@
     .youtube-icon{background-color:#282828;padding:4px;border-radius:50%;display:flex;align-items:center;justify-content:center}
     .youtube-icon svg{width:20px;height:20px}
 
+    .answer{max-width:920px;width:100%;margin-top:18px;padding:18px 20px;border:1px solid var(--border);border-radius:16px;background:color-mix(in oklab,var(--pill) 88%, transparent);text-align:left}
+    .answer h2{margin:0 0 8px 0;font-size:18px}
+    .answer .bubble{display:inline-block;padding:10px 14px;border-radius:14px;background:color-mix(in oklab,var(--pill-2) 92%, transparent);border:1px solid var(--border);font-weight:700}
+
     .legal{position:fixed;inset:auto 0 0 0;text-align:center;padding:12px;color:color-mix(in oklab, var(--muted) 88%, transparent);backdrop-filter:saturate(1.1) blur(6px);font-size:14px}
 
     .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -55,8 +59,8 @@
 
   <main class="hero" role="main">
     <div class="stack">
-      <h1 class="h1">OktoAI‑5</h1>
-      <p class="sub">OktoAI‑5 offre le modèle le plus rapide et le plus utile, avec raisonnement intégré.</p>
+      <h1 class="h1">OktoAI-5</h1>
+      <p class="sub">OktoAI-5 offre le modèle le plus rapide et le plus utile, avec raisonnement intégré.</p>
 
       <form class="ask" id="askForm" role="search" aria-label="Zone de saisie principale">
         <label class="sr-only" for="q">Posez une question</label>
@@ -81,6 +85,11 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#000"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#10a37f"/></svg> Perplexity AI
         </span>
       </div>
+
+      <section id="answerBox" class="answer" hidden>
+        <h2>Réponse</h2>
+        <div class="bubble" id="answerText"></div>
+      </section>
     </div>
   </main>
 
@@ -94,40 +103,67 @@
     const deepaiChip = document.getElementById('deepaiChip');
     const youtubeChip = document.getElementById('youtubeChip');
     const imageaiChip = document.getElementById('imageaiChip');
+    const answerBox = document.getElementById('answerBox');
+    const answerText = document.getElementById('answerText');
     let selectedEngine = 'google';
 
     function setActive(engine) {
       selectedEngine = engine;
-      googleChip.classList.toggle('active', engine === 'google');
-      perplexityChip.classList.toggle('active', engine === 'perplexity');
-      youChip.classList.toggle('active', engine === 'you');
-      deepaiChip.classList.toggle('active', engine === 'deepai');
-      youtubeChip.classList.toggle('active', engine === 'youtube');
-      imageaiChip.classList.toggle('active', engine === 'imageai');
+      googleChip?.classList.toggle('active', engine === 'google');
+      perplexityChip?.classList.toggle('active', engine === 'perplexity');
+      youChip?.classList.toggle('active', engine === 'you');
+      deepaiChip?.classList.toggle('active', engine === 'deepai');
+      youtubeChip?.classList.toggle('active', engine === 'youtube');
+      imageaiChip?.classList.toggle('active', engine === 'imageai');
     }
 
-    googleChip.addEventListener('click', () => setActive('google'));
-    perplexityChip.addEventListener('click', () => setActive('perplexity'));
-    youChip.addEventListener('click', () => setActive('you'));
-    deepaiChip.addEventListener('click', () => setActive('deepai'));
-    youtubeChip.addEventListener('click', () => setActive('youtube'));
-    imageaiChip.addEventListener('click', () => setActive('imageai'));
+    googleChip?.addEventListener('click', () => setActive('google'));
+    perplexityChip?.addEventListener('click', () => setActive('perplexity'));
+    youChip?.addEventListener('click', () => setActive('you'));
+    deepaiChip?.addEventListener('click', () => setActive('deepai'));
+    youtubeChip?.addEventListener('click', () => setActive('youtube'));
+    imageaiChip?.addEventListener('click', () => setActive('imageai'));
+
+    function normalizeStr(str){
+      return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu,'')
+        .trim();
+    }
+
+    function showAnswer(text){
+      answerText.textContent = text;
+      answerBox.hidden = false;
+    }
 
     document.getElementById('askForm').addEventListener('submit', e => {
       e.preventDefault();
-      if (!q.value.trim()) { q.focus(); return; }
+      const raw = q.value;
+      const query = raw.trim();
+      if (!query){ q.focus(); return; }
+
+      // Easter egg (tolère accents/casse/espaces)
+      const isEasterEgg = normalizeStr(query) === normalizeStr('Qui est le plus beau');
+      if (isEasterEgg){
+        showAnswer('Jeremias Raymundo');
+        return;
+      }
+
+      // Sinon: ouvrir le moteur choisi
+      const u = encodeURIComponent(query);
       if (selectedEngine === 'google') {
-        window.open('https://www.google.com/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
+        window.open('https://www.google.com/search?q=' + u, '_blank', 'noopener');
       } else if (selectedEngine === 'perplexity') {
-        window.open('https://www.perplexity.ai/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
+        window.open('https://www.perplexity.ai/search?q=' + u, '_blank', 'noopener');
       } else if (selectedEngine === 'you') {
-        window.open('https://you.com/search?q=' + encodeURIComponent(q.value), '_blank', 'noopener');
+        window.open('https://you.com/search?q=' + u, '_blank', 'noopener');
       } else if (selectedEngine === 'deepai') {
-        window.open('https://deepai.org/chat?query=' + encodeURIComponent(q.value), '_blank', 'noopener');
+        window.open('https://deepai.org/chat?query=' + u, '_blank', 'noopener');
       } else if (selectedEngine === 'youtube') {
-        window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q.value), '_blank', 'noopener');
+        window.open('https://www.youtube.com/results?search_query=' + u, '_blank', 'noopener');
       } else if (selectedEngine === 'imageai') {
-        window.open('https://deepai.org/machine-learning-model/text2img?query=' + encodeURIComponent(q.value), '_blank', 'noopener');
+        window.open('https://deepai.org/machine-learning-model/text2img?query=' + u, '_blank', 'noopener');
       }
     });
   </script>
