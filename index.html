@@ -92,11 +92,15 @@
     function normalizeStr(str){return str.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').trim();}
     function showAnswer(text){answerText.textContent=text;answerBox.hidden=false;}
     const easterEggs={
+      'qui est hilotech':'La best MSP',
       'qui est le plus beau':'Jeremias Raymundo',
       'qui a le plus gros penis':'PAZ',
       'qui vend le plus chez hilotech':'Christopher Quenneville',
       'qui est le meilleur technicien chez hilotech':'Christopher Quenneville',
-      'qui est hilotech':'La best MSP'
+      'qui est gayremias':'Jeremias Raymundo',
+      'qui est le meilleur architect solution de chez hilotech':'Sebastien Bergevins',
+      'qui est la plus belle femme du monde':'Babygirl',
+      'qui est christopher quenneville':'Le meilleur vendeur de chez Hilotech'
     };
     document.getElementById('askForm').addEventListener('submit',e=>{
       e.preventDefault();
